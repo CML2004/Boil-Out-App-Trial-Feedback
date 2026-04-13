@@ -195,6 +195,13 @@ select[disabled]{
   color:var(--muted);
 }
 
+.explainer{
+  margin-bottom:16px;
+  font-size:14px;
+  line-height:1.6;
+  color:var(--muted);
+}
+
 @media (max-width: 900px){
   .grid{ grid-template-columns:1fr; }
   .row{ grid-template-columns:1fr; }
@@ -214,7 +221,10 @@ select[disabled]{
 <div class="wrap">
 
   <div class="card" id="loginCard">
-    <h2 class="headline">Operator Login</h2>
+    <h2 class="headline">Demo Login</h2>
+    <div class="explainer">
+      This screen represents a protected leadership area. In a live version, this page would allow approved users to manage fryers, rules, and alert recipients. In this demo, it is read-only and exists to show the layout and features.
+    </div>
     <div class="field">
       <label for="username">Username</label>
       <input id="username" type="text" placeholder="Username" />
@@ -224,16 +234,16 @@ select[disabled]{
       <input id="password" type="password" placeholder="Password" />
     </div>
     <button id="loginBtn">Log In</button>
-    <div class="small-note" style="margin-top:10px;">Prototype credentials: Username: CFA00756 | Password: CHICKEN</div>
+    <div class="small-note" style="margin-top:10px;">Demo credentials: Username: demo | Password: preview</div>
     <div class="success" id="loginSuccess">Logged in.</div>
   </div>
 
   <div id="appContent" class="hidden">
 
     <div class="card">
-      <h2 class="headline">Preview Dashboard</h2>
+      <h2 class="headline">What this page is for</h2>
       <div class="small-note">
-        This is a public demo. Controls are visible for evaluation, but editing is disabled in published preview mode.
+        This page is the admin and leadership side of the system. It is meant to show how a leader could add or edit fryers, manage boil-out timing rules, and manage alert recipients. In this public preview, controls are visible for evaluation, but all editing is disabled.
       </div>
     </div>
 
@@ -242,6 +252,9 @@ select[disabled]{
 
         <div class="card">
           <h2 class="headline">Add Fryer</h2>
+          <div class="small-note" style="margin-bottom:12px;">
+            This section would allow a leader to add a new fryer to the system and assign its type and most recent boil-out date.
+          </div>
           <div class="field">
             <label for="newFryerName">Fryer Name</label>
             <input id="newFryerName" type="text" placeholder="e.g. Fryer 8" disabled />
@@ -260,6 +273,9 @@ select[disabled]{
 
         <div class="card">
           <h2 class="headline">Manage Fryers</h2>
+          <div class="small-note" style="margin-bottom:12px;">
+            This section would allow a leader to edit fryer names, types, and last boil-out dates for existing fryers.
+          </div>
           <div id="fryerManagementList"></div>
         </div>
 
@@ -269,6 +285,9 @@ select[disabled]{
 
         <div class="card">
           <h2 class="headline">Add Fryer Type</h2>
+          <div class="small-note" style="margin-bottom:12px;">
+            This section would allow a leader to create a new fryer category and set how many days until it becomes needed or overdue.
+          </div>
           <div class="field">
             <label for="newTypeName">Fryer Type Name</label>
             <input id="newTypeName" type="text" placeholder="e.g. Open Triple Fryer" disabled />
@@ -287,6 +306,9 @@ select[disabled]{
 
         <div class="card">
           <h2 class="headline">Type Rules</h2>
+          <div class="small-note" style="margin-bottom:12px;">
+            This section shows the timing rules used to decide when different fryer types should be flagged as needed or overdue.
+          </div>
           <div id="typeRulesList"></div>
           <button id="saveRulesBtn" disabled>Save Type Rules</button>
           <div class="readonly-note">Preview mode only — saving is disabled.</div>
@@ -297,9 +319,12 @@ select[disabled]{
 
     <div class="card">
       <h2 class="headline">Text Alert Recipients</h2>
+      <div class="small-note" style="margin-bottom:12px;">
+        This section would allow leadership to manage who receives future alert notifications when fryers become due or overdue.
+      </div>
       <div class="field">
         <label for="newRecipient">Phone Number</label>
-        <input id="newRecipient" type="text" placeholder="e.g. 7575550123" disabled />
+        <input id="newRecipient" type="text" placeholder="e.g. 5551234567" disabled />
       </div>
       <button id="addRecipientBtn" disabled>Add Recipient</button>
 
@@ -313,8 +338,8 @@ select[disabled]{
 <script src="demo-data.js"></script>
 <script>
 const LOGIN_KEY = "boilOutLeadershipPreviewLoggedIn";
-const USERNAME = "CFA00000";
-const PASSWORD = "CHICKEN";
+const USERNAME = "demo";
+const PASSWORD = "preview";
 
 function getData() {
   return JSON.parse(JSON.stringify(window.DEMO_DATA));

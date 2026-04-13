@@ -105,6 +105,28 @@
       padding: 20px 16px 28px;
     }
 
+    .explainer {
+      background: var(--surface);
+      border: 1px solid var(--surface-3);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .explainer-title {
+      margin: 0 0 8px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 20px;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+    }
+
+    .explainer-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
     .status-card {
       background: var(--surface);
       border-left: 8px solid var(--danger);
@@ -477,6 +499,13 @@
   </header>
 
   <main class="wrap">
+    <section class="explainer">
+      <h2 class="explainer-title">What this page shows</h2>
+      <p class="explainer-text">
+        This page is the individual fryer view. It shows the current status of one fryer, when it was last boiled out, a small history log, and the actions a user or leader would normally take. In this public preview, actions are visible for evaluation, but no data is actually saved.
+      </p>
+    </section>
+
     <section class="status-card" id="statusCard">
       <div class="status-top">
         <div>
@@ -525,7 +554,9 @@
       <div class="dropdown-content" id="leaderContent">
         <div class="tool-box">
           <h3 class="tool-title">Set Last Boil Out</h3>
-          <p class="tool-desc">Manually set the most recent boil-out date for this fryer.</p>
+          <p class="tool-desc">
+            This tool would allow a leader to manually update the most recent boil-out date for this fryer if the recorded date needed correction.
+          </p>
 
           <div class="field">
             <label for="manualDate">Last Boil Out Date</label>
@@ -534,7 +565,7 @@
 
           <div class="field">
             <label for="manualDateInitials">Initials</label>
-            <input id="manualDateInitials" type="text" maxlength="5" placeholder="e.g. CML" />
+            <input id="manualDateInitials" type="text" maxlength="5" placeholder="e.g. AB" />
           </div>
 
           <div class="field">
@@ -550,7 +581,9 @@
 
         <div class="tool-box">
           <h3 class="tool-title">Clear Boil Out Needed</h3>
-          <p class="tool-desc">Remove the current boil-out-needed flag for this fryer.</p>
+          <p class="tool-desc">
+            This tool would allow a leader to remove a boil-out-needed flag after the issue was resolved or after leadership review.
+          </p>
 
           <div class="field">
             <label for="clearReason">Reason</label>
@@ -565,7 +598,7 @@
 
           <div class="field">
             <label for="clearInitials">Initials</label>
-            <input id="clearInitials" type="text" maxlength="5" placeholder="e.g. CML" />
+            <input id="clearInitials" type="text" maxlength="5" placeholder="e.g. AB" />
           </div>
 
           <div class="field">
@@ -585,11 +618,13 @@
   <div class="modal-backdrop" id="logModal">
     <div class="modal">
       <h2 class="headline">Log Boil Out</h2>
-      <p>Enter initials to simulate logging this boil-out.</p>
+      <p>
+        In a live version, this action would record that a boil-out was completed for this fryer. In this demo, it only shows the workflow.
+      </p>
 
       <div class="field">
         <label for="logInitialsInput">Initials</label>
-        <input id="logInitialsInput" type="text" maxlength="5" placeholder="e.g. CML" />
+        <input id="logInitialsInput" type="text" maxlength="5" placeholder="e.g. AB" />
       </div>
 
       <div class="modal-actions">
@@ -602,7 +637,9 @@
   <div class="modal-backdrop" id="neededModal">
     <div class="modal">
       <h2 class="headline">Boil Out Needed</h2>
-      <p>Select the reason and enter initials to simulate this action.</p>
+      <p>
+        In a live version, this action would flag the fryer for attention and attach a reason. In this demo, nothing is saved.
+      </p>
 
       <div class="field">
         <label for="neededReasonSelect">Reason</label>
@@ -625,7 +662,7 @@
 
       <div class="field">
         <label for="neededInitialsInput">Initials</label>
-        <input id="neededInitialsInput" type="text" maxlength="5" placeholder="e.g. CML" />
+        <input id="neededInitialsInput" type="text" maxlength="5" placeholder="e.g. AB" />
       </div>
 
       <div class="modal-actions">
@@ -638,8 +675,8 @@
   <div class="modal-backdrop" id="leaderPinModal">
     <div class="modal">
       <h2 class="headline">Leader Tools</h2>
-      <p>Enter the security PIN to preview leader-only controls.
-               Preview Mode: CFA00000
+      <p>
+        Enter the generic demo PIN to preview leader-only controls. Demo PIN: <strong>1234</strong>
       </p>
 
       <div class="field">
@@ -663,7 +700,7 @@
 
   <script src="demo-data.js"></script>
   <script>
-    const LEADER_PIN = "CFA00000";
+    const LEADER_PIN = "1234";
     let leaderToolsUnlocked = false;
     let successToastTimer = null;
 

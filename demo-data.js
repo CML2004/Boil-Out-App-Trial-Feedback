@@ -12,7 +12,7 @@ window.DEMO_DATA = {
         {
           timestamp: "2026-04-10T09:15:00",
           action: "Boil-out logged",
-          initials: "CML"
+          initials: "AB"
         }
       ]
     },
@@ -28,7 +28,7 @@ window.DEMO_DATA = {
         {
           timestamp: "2026-03-25T08:40:00",
           action: "Boil-out logged",
-          initials: "JH"
+          initials: "CD"
         }
       ]
     },
@@ -44,7 +44,7 @@ window.DEMO_DATA = {
         {
           timestamp: "2026-04-11T14:05:00",
           action: "Boil-out needed flagged",
-          initials: "CML",
+          initials: "EF",
           reason: "oil-quality",
           notes: "Oil darkening faster than expected."
         }
@@ -92,7 +92,7 @@ window.DEMO_DATA = {
     }
   ],
   settings: {
-    usersForTextAlerts: ["7575550123", "7575550456"],
+    usersForTextAlerts: ["5551234567", "5559876543"],
     typeRules: {
       "Pressure Fryer": { neededDays: 22, overdueDays: 28 },
       "Open Single Fryer": { neededDays: 22, overdueDays: 28 },
