@@ -56,12 +56,28 @@ body{
   justify-content:space-between;
   align-items:center;
   gap:12px;
+  flex-wrap:wrap;
 }
 
 .header a{
   color:var(--text);
   text-decoration:none;
   font-weight:700;
+}
+
+.header-right{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.feedback-link{
+  border:1px solid var(--surface-3);
+  background:#fff;
+  padding:10px 12px;
+  color:var(--text) !important;
+  font-size:14px !important;
 }
 
 .wrap{
@@ -215,7 +231,10 @@ select[disabled]{
 
 <div class="header">
   <div class="headline">Leadership Dashboard</div>
-  <a href="index.html">← Back to Dashboard</a>
+  <div class="header-right">
+    <a class="feedback-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfVO5ZLf7eKYrulaZz8IfLqwuQl2YvL6AAZPvQfg66m9EMbcw/viewform?usp=dialog" target="_blank" rel="noopener noreferrer">Give Feedback</a>
+    <a href="index.html">← Back to Dashboard</a>
+  </div>
 </div>
 
 <div class="wrap">
@@ -244,6 +263,13 @@ select[disabled]{
       <h2 class="headline">What this page is for</h2>
       <div class="small-note">
         This page is the admin and leadership side of the system. It is meant to show how a leader could add or edit fryers, manage boil-out timing rules, and manage alert recipients. In this public preview, controls are visible for evaluation, but all editing is disabled.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="headline">How this connects to NFC use</h2>
+      <div class="small-note">
+        The leadership side supports the fryer pages that would open from NFC taps in the kitchen. This is where the structure behind that workflow would be managed.
       </div>
     </div>
 

@@ -53,14 +53,15 @@
     }
 
     .topbar {
-      height: 64px;
+      min-height: 64px;
       border-bottom: 4px solid var(--primary);
       background: #f8fcff;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
+      padding: 12px 16px;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .topbar-left {
@@ -68,6 +69,13 @@
       align-items: center;
       gap: 12px;
       min-width: 0;
+    }
+
+    .topbar-right{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
     }
 
     .back {
@@ -99,6 +107,17 @@
       white-space: nowrap;
     }
 
+    .feedback-link{
+      border:1px solid var(--surface-3);
+      background:#fff;
+      padding:10px 12px;
+      color:var(--text) !important;
+      font-family:Inter,sans-serif !important;
+      font-size:14px !important;
+      font-weight:700 !important;
+      text-transform:none !important;
+    }
+
     .wrap {
       max-width: 460px;
       margin: 0 auto;
@@ -121,6 +140,28 @@
     }
 
     .explainer-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .nfc-box {
+      background: var(--surface-2);
+      border: 1px solid var(--surface-3);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .nfc-title {
+      margin: 0 0 8px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+    }
+
+    .nfc-text {
       margin: 0;
       color: var(--muted);
       font-size: 14px;
@@ -495,7 +536,10 @@
       <button class="back" onclick="history.back()">←</button>
       <h1 class="headline" id="pageTitle">Fryer 1</h1>
     </div>
-    <a href="index.html">Dashboard</a>
+    <div class="topbar-right">
+      <a class="feedback-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfVO5ZLf7eKYrulaZz8IfLqwuQl2YvL6AAZPvQfg66m9EMbcw/viewform?usp=dialog" target="_blank" rel="noopener noreferrer">Give Feedback</a>
+      <a href="index.html">Dashboard</a>
+    </div>
   </header>
 
   <main class="wrap">
@@ -503,6 +547,13 @@
       <h2 class="explainer-title">What this page shows</h2>
       <p class="explainer-text">
         This page is the individual fryer view. It shows the current status of one fryer, when it was last boiled out, a small history log, and the actions a user or leader would normally take. In this public preview, actions are visible for evaluation, but no data is actually saved.
+      </p>
+    </section>
+
+    <section class="nfc-box">
+      <h2 class="nfc-title">How the NFC tap would work</h2>
+      <p class="nfc-text">
+        In a live version, tapping the NFC tag on this fryer would open this exact page directly. That means the user would not need to search for the fryer manually.
       </p>
     </section>
 

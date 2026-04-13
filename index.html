@@ -19,6 +19,7 @@
   --needed:#b7791f;
   --overdue:#ba1a1a;
   --preview:#0a3c60;
+  --surface-2:#e3f0f8;
 }
 
 *{box-sizing:border-box}
@@ -61,6 +62,7 @@ body{
   display:flex;
   align-items:center;
   gap:14px;
+  flex-wrap:wrap;
 }
 
 .header-meta{
@@ -69,21 +71,33 @@ body{
   font-weight:600;
 }
 
-.settings-link{
+.settings-link,
+.feedback-link{
   text-decoration:none;
   color:var(--text);
   font-size:22px;
   line-height:1;
 }
 
-.explainer{
+.feedback-link{
+  font-size:14px;
+  font-weight:700;
+  border:1px solid var(--border);
+  background:#fff;
+  padding:10px 12px;
+}
+
+.explainer,
+.nfc-box{
   margin:16px;
   background:#ffffff;
   border:1px solid var(--border);
   padding:16px;
 }
 
-.explainer-title{
+.explainer-title,
+.nfc-title,
+.flow-title{
   margin:0 0 8px;
   font-family:"Space Grotesk",sans-serif;
   font-size:22px;
@@ -91,11 +105,50 @@ body{
   letter-spacing:-0.03em;
 }
 
-.explainer-text{
+.explainer-text,
+.nfc-text{
   margin:0;
   font-size:14px;
   line-height:1.6;
   color:var(--muted);
+}
+
+.flow-box{
+  margin:16px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  padding:16px;
+}
+
+.flow-steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:12px;
+}
+
+.flow-step{
+  background:#fff;
+  border:1px solid var(--border);
+  padding:14px;
+}
+
+.flow-step-number{
+  font-family:"Space Grotesk",sans-serif;
+  font-size:24px;
+  opacity:.45;
+  margin-bottom:4px;
+}
+
+.flow-step-title{
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.flow-step-text{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.5;
 }
 
 .controls{
@@ -191,6 +244,79 @@ body{
   font-size:12px;
   color:var(--muted);
 }
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(17,29,35,0.62);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  z-index:1000;
+}
+
+.overlay.show{
+  display:flex;
+}
+
+.overlay-card{
+  width:100%;
+  max-width:560px;
+  background:#fff;
+  border-top:5px solid var(--preview);
+  padding:22px;
+}
+
+.overlay-title{
+  margin:0 0 10px;
+  font-family:"Space Grotesk",sans-serif;
+  font-size:28px;
+  text-transform:uppercase;
+  letter-spacing:-0.04em;
+}
+
+.overlay-text{
+  margin:0 0 14px;
+  color:var(--muted);
+  line-height:1.6;
+  font-size:14px;
+}
+
+.overlay-list{
+  margin:0 0 18px;
+  padding-left:18px;
+  color:var(--text);
+  line-height:1.7;
+}
+
+.overlay-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.overlay-btn{
+  border:0;
+  padding:12px 14px;
+  font:inherit;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.overlay-btn.primary{
+  background:var(--preview);
+  color:#fff;
+}
+
+.overlay-btn.secondary{
+  background:#eef4f8;
+  color:var(--text);
+}
+
+@media (max-width: 720px){
+  .flow-steps{ grid-template-columns:1fr; }
+}
 </style>
 </head>
 
@@ -201,6 +327,7 @@ body{
   <h1>Demo Store</h1>
   <div class="header-right">
     <div class="header-meta" id="updatedAt">Last updated: --</div>
+    <a class="feedback-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfVO5ZLf7eKYrulaZz8IfLqwuQl2YvL6AAZPvQfg66m9EMbcw/viewform?usp=dialog" target="_blank" rel="noopener noreferrer">Give Feedback</a>
     <a class="settings-link" href="leadership-dashboard.html" title="Leadership Dashboard">⚙</a>
   </div>
 </div>
@@ -210,6 +337,34 @@ body{
   <p class="explainer-text">
     This dashboard shows all fryers in one place and gives each fryer a current status based on its last recorded boil-out date and rule settings. The goal is to make it easy for a leader to quickly see what is okay, what is due soon, and what needs attention.
   </p>
+</div>
+
+<div class="nfc-box">
+  <h2 class="nfc-title">How the NFC tags would work</h2>
+  <p class="nfc-text">
+    In a live version, each fryer would have a small NFC tag. A team member would tap the tag with their phone, and that exact fryer page would open instantly. That means no searching, no paper log, and no guessing which fryer is being updated.
+  </p>
+</div>
+
+<div class="flow-box">
+  <h2 class="flow-title">How it works</h2>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-step-number">1</div>
+      <div class="flow-step-title">Tap fryer</div>
+      <div class="flow-step-text">An NFC tag on the fryer opens the correct fryer page immediately.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-number">2</div>
+      <div class="flow-step-title">Log or flag</div>
+      <div class="flow-step-text">The user logs a completed boil-out or flags that a boil-out is needed.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-number">3</div>
+      <div class="flow-step-title">Leadership sees it</div>
+      <div class="flow-step-text">Leadership can see the current status of all fryers in one dashboard.</div>
+    </div>
+  </div>
 </div>
 
 <div class="controls">
@@ -223,9 +378,28 @@ body{
 
 <div class="footer">Tap a fryer to view a more detailed preview of how logging, history, and leader tools would work.</div>
 
+<div class="overlay" id="welcomeOverlay">
+  <div class="overlay-card">
+    <h2 class="overlay-title">How this demo works</h2>
+    <p class="overlay-text">
+      This preview is meant to show the basic workflow, not a live saving system.
+    </p>
+    <ul class="overlay-list">
+      <li>Tap a fryer to open its individual page.</li>
+      <li>In a live version, this would happen from an NFC tag on the fryer.</li>
+      <li>You can explore the actions and leader tools, but this public preview does not save changes.</li>
+    </ul>
+    <div class="overlay-actions">
+      <button class="overlay-btn primary" id="closeOverlayBtn">Got it</button>
+      <a class="overlay-btn secondary" href="https://docs.google.com/forms/d/e/1FAIpQLSfVO5ZLf7eKYrulaZz8IfLqwuQl2YvL6AAZPvQfg66m9EMbcw/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-block;">Give Feedback</a>
+    </div>
+  </div>
+</div>
+
 <script src="demo-data.js"></script>
 <script>
 let currentFilter = "all";
+const OVERLAY_KEY = "boilOutPreviewIntroSeen";
 
 function getData() {
   return JSON.parse(JSON.stringify(window.DEMO_DATA));
@@ -314,7 +488,27 @@ document.querySelectorAll(".filter-btn").forEach(btn => {
   });
 });
 
+function showOverlayIfNeeded() {
+  const seen = sessionStorage.getItem(OVERLAY_KEY) === "true";
+  if (!seen) {
+    document.getElementById("welcomeOverlay").classList.add("show");
+  }
+}
+
+document.getElementById("closeOverlayBtn").addEventListener("click", () => {
+  sessionStorage.setItem(OVERLAY_KEY, "true");
+  document.getElementById("welcomeOverlay").classList.remove("show");
+});
+
+document.getElementById("welcomeOverlay").addEventListener("click", (e) => {
+  if (e.target.id === "welcomeOverlay") {
+    sessionStorage.setItem(OVERLAY_KEY, "true");
+    document.getElementById("welcomeOverlay").classList.remove("show");
+  }
+});
+
 render();
+showOverlayIfNeeded();
 </script>
 </body>
 </html>
