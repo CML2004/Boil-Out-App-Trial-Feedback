@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Leadership Dashboard Preview</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#f4faff;
+  --surface:#ffffff;
+  --surface-2:#e3f0f8;
+  --surface-3:#d7e4ec;
+  --text:#111d23;
+  --muted:#4c616c;
+  --primary:#ba002e;
+  --ok:#006864;
+  --danger:#ba1a1a;
+  --preview:#0a3c60;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,sans-serif;
+}
+
+.preview-banner{
+  background:var(--preview);
+  color:#fff;
+  padding:10px 16px;
+  text-align:center;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.headline{
+  font-family:"Space Grotesk",sans-serif;
+  text-transform:uppercase;
+  letter-spacing:-0.04em;
+  font-weight:800;
+}
+
+.header{
+  padding:16px;
+  border-bottom:4px solid #111d23;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+.header a{
+  color:var(--text);
+  text-decoration:none;
+  font-weight:700;
+}
+
+.wrap{
+  max-width:1100px;
+  margin:0 auto;
+  padding:20px 16px 32px;
+}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--surface-3);
+  padding:18px;
+  margin-bottom:16px;
+}
+
+.card h2{
+  margin:0 0 12px;
+  font-size:26px;
+}
+
+.card h3{
+  margin:0 0 10px;
+  font-size:18px;
+}
+
+.field{
+  margin-bottom:12px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:6px;
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--muted);
+}
+
+input, select{
+  width:100%;
+  padding:12px;
+  border:1px solid var(--surface-3);
+  background:#fff;
+  font:inherit;
+}
+
+button{
+  border:0;
+  background:var(--primary);
+  color:#fff;
+  padding:12px 14px;
+  font:inherit;
+  font-weight:700;
+  cursor:pointer;
+}
+
+button.secondary{
+  background:var(--surface-3);
+  color:var(--text);
+}
+
+button[disabled],
+input[disabled],
+select[disabled]{
+  opacity:.65;
+  cursor:not-allowed;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.small-note{
+  font-size:13px;
+  color:var(--muted);
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1.1fr 1.1fr 1fr auto;
+  gap:10px;
+  align-items:end;
+  margin-bottom:12px;
+}
+
+.rule-row{
+  display:grid;
+  grid-template-columns:1.2fr 1fr 1fr auto;
+  gap:10px;
+  align-items:end;
+  margin-bottom:12px;
+}
+
+.user-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+  border-top:1px solid var(--surface-3);
+}
+
+.success{
+  margin-top:10px;
+  color:var(--ok);
+  font-size:13px;
+  font-weight:700;
+  display:none;
+}
+
+.success.show{
+  display:block;
+}
+
+.hidden{
+  display:none;
+}
+
+.section-stack{
+  display:grid;
+  gap:16px;
+}
+
+.readonly-note{
+  margin-top:8px;
+  font-size:13px;
+  font-weight:700;
+  color:var(--muted);
+}
+
+@media (max-width: 900px){
+  .grid{ grid-template-columns:1fr; }
+  .row{ grid-template-columns:1fr; }
+  .rule-row{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+
+<body>
+<div class="preview-banner">Preview Mode — Sample Data Only</div>
+
+<div class="header">
+  <div class="headline">Leadership Dashboard</div>
+  <a href="index.html">← Back to Dashboard</a>
+</div>
+
+<div class="wrap">
+
+  <div class="card" id="loginCard">
+    <h2 class="headline">Operator Login</h2>
+    <div class="field">
+      <label for="username">Username</label>
+      <input id="username" type="text" placeholder="Username" />
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="Password" />
+    </div>
+    <button id="loginBtn">Log In</button>
+    <div class="small-note" style="margin-top:10px;">Prototype credentials: Username: CFA00756 | Password: CHICKEN</div>
+    <div class="success" id="loginSuccess">Logged in.</div>
+  </div>
+
+  <div id="appContent" class="hidden">
+
+    <div class="card">
+      <h2 class="headline">Preview Dashboard</h2>
+      <div class="small-note">
+        This is a public demo. Controls are visible for evaluation, but editing is disabled in published preview mode.
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="section-stack">
+
+        <div class="card">
+          <h2 class="headline">Add Fryer</h2>
+          <div class="field">
+            <label for="newFryerName">Fryer Name</label>
+            <input id="newFryerName" type="text" placeholder="e.g. Fryer 8" disabled />
+          </div>
+          <div class="field">
+            <label for="newFryerType">Fryer Type</label>
+            <select id="newFryerType" disabled></select>
+          </div>
+          <div class="field">
+            <label for="newFryerDate">Last Boil Out Date</label>
+            <input id="newFryerDate" type="date" disabled />
+          </div>
+          <button id="addFryerBtn" disabled>Add Fryer</button>
+          <div class="readonly-note">Preview mode only — adding is disabled.</div>
+        </div>
+
+        <div class="card">
+          <h2 class="headline">Manage Fryers</h2>
+          <div id="fryerManagementList"></div>
+        </div>
+
+      </div>
+
+      <div class="section-stack">
+
+        <div class="card">
+          <h2 class="headline">Add Fryer Type</h2>
+          <div class="field">
+            <label for="newTypeName">Fryer Type Name</label>
+            <input id="newTypeName" type="text" placeholder="e.g. Open Triple Fryer" disabled />
+          </div>
+          <div class="field">
+            <label for="newTypeNeededDays">Needed Flag Days</label>
+            <input id="newTypeNeededDays" type="number" min="0" value="22" disabled />
+          </div>
+          <div class="field">
+            <label for="newTypeOverdueDays">Overdue Flag Days</label>
+            <input id="newTypeOverdueDays" type="number" min="0" value="28" disabled />
+          </div>
+          <button id="addTypeBtn" disabled>Add Fryer Type</button>
+          <div class="readonly-note">Preview mode only — editing is disabled.</div>
+        </div>
+
+        <div class="card">
+          <h2 class="headline">Type Rules</h2>
+          <div id="typeRulesList"></div>
+          <button id="saveRulesBtn" disabled>Save Type Rules</button>
+          <div class="readonly-note">Preview mode only — saving is disabled.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="headline">Text Alert Recipients</h2>
+      <div class="field">
+        <label for="newRecipient">Phone Number</label>
+        <input id="newRecipient" type="text" placeholder="e.g. 7575550123" disabled />
+      </div>
+      <button id="addRecipientBtn" disabled>Add Recipient</button>
+
+      <div id="recipientList" style="margin-top:16px;"></div>
+      <div class="readonly-note">Preview mode only — recipients cannot be changed.</div>
+    </div>
+
+  </div>
+</div>
+
+<script src="demo-data.js"></script>
+<script>
+const LOGIN_KEY = "boilOutLeadershipPreviewLoggedIn";
+const USERNAME = "CFA00756";
+const PASSWORD = "CHICKEN";
+
+function getData() {
+  return JSON.parse(JSON.stringify(window.DEMO_DATA));
+}
+
+function showSuccess(id) {
+  const el = document.getElementById(id);
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 1800);
+}
+
+function getTypeNames(data) {
+  return Object.keys(data.settings.typeRules);
+}
+
+function renderLogin() {
+  const loggedIn = sessionStorage.getItem(LOGIN_KEY) === "true";
+  document.getElementById("loginCard").classList.toggle("hidden", loggedIn);
+  document.getElementById("appContent").classList.toggle("hidden", !loggedIn);
+
+  if (loggedIn) {
+    renderApp();
+  }
+}
+
+function renderApp() {
+  const data = getData();
+  const typeNames = getTypeNames(data);
+
+  const newFryerType = document.getElementById("newFryerType");
+  newFryerType.innerHTML = "";
+  typeNames.forEach(typeName => {
+    const option = document.createElement("option");
+    option.value = typeName;
+    option.textContent = typeName;
+    newFryerType.appendChild(option);
+  });
+
+  const fryerManagementList = document.getElementById("fryerManagementList");
+  fryerManagementList.innerHTML = "";
+
+  data.fryers.forEach(fryer => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `
+      <div class="field">
+        <label>Fryer Name</label>
+        <input type="text" value="${fryer.name}" disabled />
+      </div>
+      <div class="field">
+        <label>Fryer Type</label>
+        <select disabled>
+          ${typeNames.map(typeName => `
+            <option value="${typeName}" ${fryer.type === typeName ? "selected" : ""}>${typeName}</option>
+          `).join("")}
+        </select>
+      </div>
+      <div class="field">
+        <label>Last Boil Out</label>
+        <input type="date" value="${fryer.lastBoilOut}" disabled />
+      </div>
+      <div class="field">
+        <button type="button" disabled>Save</button>
+      </div>
+    `;
+    fryerManagementList.appendChild(row);
+  });
+
+  const typeRulesList = document.getElementById("typeRulesList");
+  typeRulesList.innerHTML = "";
+
+  Object.entries(data.settings.typeRules).forEach(([typeName, rules]) => {
+    const row = document.createElement("div");
+    row.className = "rule-row";
+    row.innerHTML = `
+      <div class="field">
+        <label>Fryer Type</label>
+        <input type="text" value="${typeName}" disabled />
+      </div>
+      <div class="field">
+        <label>Needed Flag Days</label>
+        <input type="number" min="0" value="${rules.neededDays}" disabled />
+      </div>
+      <div class="field">
+        <label>Overdue Flag Days</label>
+        <input type="number" min="0" value="${rules.overdueDays}" disabled />
+      </div>
+      <div></div>
+    `;
+    typeRulesList.appendChild(row);
+  });
+
+  const recipientList = document.getElementById("recipientList");
+  recipientList.innerHTML = "";
+
+  if (!data.settings.usersForTextAlerts.length) {
+    recipientList.innerHTML = `<div class="small-note">No recipients added yet.</div>`;
+  } else {
+    data.settings.usersForTextAlerts.forEach((recipient) => {
+      const row = document.createElement("div");
+      row.className = "user-row";
+      row.innerHTML = `
+        <div>${recipient}</div>
+        <button type="button" disabled>Remove</button>
+      `;
+      recipientList.appendChild(row);
+    });
+  }
+}
+
+document.getElementById("loginBtn").addEventListener("click", () => {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (username !== USERNAME || password !== PASSWORD) {
+    alert("Incorrect login.");
+    return;
+  }
+
+  sessionStorage.setItem(LOGIN_KEY, "true");
+  showSuccess("loginSuccess");
+  setTimeout(renderLogin, 300);
+});
+
+renderLogin();
+</script>
+</body>
+</html>

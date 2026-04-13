@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Boil-Out Dashboard Preview</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#f4faff;
+  --card:#ffffff;
+  --text:#111d23;
+  --muted:#4c616c;
+  --border:#d7e4ec;
+  --ok:#006864;
+  --needed:#b7791f;
+  --overdue:#ba1a1a;
+  --preview:#0a3c60;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.preview-banner{
+  background:var(--preview);
+  color:#fff;
+  padding:10px 16px;
+  text-align:center;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.header{
+  padding:16px;
+  border-bottom:4px solid #111d23;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+.header h1{
+  font-family:"Space Grotesk",sans-serif;
+  margin:0;
+  text-transform:uppercase;
+  letter-spacing:-0.04em;
+}
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.header-meta{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:600;
+}
+
+.settings-link{
+  text-decoration:none;
+  color:var(--text);
+  font-size:22px;
+  line-height:1;
+}
+
+.controls{
+  padding:16px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+}
+
+.filter-btn{
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--text);
+  padding:10px 12px;
+  font:inherit;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.filter-btn.active{
+  background:#111d23;
+  color:#fff;
+  border-color:#111d23;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+  padding:0 16px 16px;
+}
+
+.card{
+  background:var(--card);
+  padding:16px;
+  border-left:8px solid var(--border);
+  text-decoration:none;
+  color:inherit;
+  min-height:200px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.card.ok{ border-color:var(--ok); }
+.card.needed{ border-color:var(--needed); }
+.card.overdue{ border-color:var(--overdue); }
+
+.fryer-id{
+  font-family:"Space Grotesk",sans-serif;
+  font-size:30px;
+  line-height:1.05;
+  opacity:.24;
+  text-transform:uppercase;
+  letter-spacing:-0.04em;
+  word-break:break-word;
+}
+
+.status{
+  font-family:"Space Grotesk",sans-serif;
+  font-size:24px;
+  text-transform:uppercase;
+  letter-spacing:-0.04em;
+  margin:10px 0 12px;
+  line-height:1;
+}
+
+.label{
+  font-size:10px;
+  text-transform:uppercase;
+  color:var(--muted);
+  letter-spacing:.12em;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.value{
+  font-weight:700;
+  text-transform:uppercase;
+}
+
+.meta{
+  margin-top:8px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.footer{
+  padding:16px;
+  text-align:center;
+  font-size:12px;
+  color:var(--muted);
+}
+</style>
+</head>
+
+<body>
+<div class="preview-banner">Preview Mode — Sample Data Only</div>
+
+<div class="header">
+  <h1>Store 00756</h1>
+  <div class="header-right">
+    <div class="header-meta" id="updatedAt">Last updated: --</div>
+    <a class="settings-link" href="leadership-dashboard.html" title="Leadership Dashboard">⚙</a>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="ok">OK</button>
+  <button class="filter-btn" data-filter="needed">Needed</button>
+  <button class="filter-btn" data-filter="overdue">Overdue</button>
+</div>
+
+<div class="grid" id="fryerGrid"></div>
+
+<div class="footer">Tap a fryer to view details</div>
+
+<script src="demo-data.js"></script>
+<script>
+let currentFilter = "all";
+
+function getData() {
+  return JSON.parse(JSON.stringify(window.DEMO_DATA));
+}
+
+function daysSince(dateString) {
+  const now = new Date();
+  const then = new Date(dateString + "T00:00:00");
+  const diffMs = now - then;
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+}
+
+function formatDate(dateString) {
+  const d = new Date(dateString + "T00:00:00");
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function getStatus(fryer, settings) {
+  if (fryer.needsBoilOut) return "needed";
+
+  const rules = settings.typeRules[fryer.type] || { neededDays: 22, overdueDays: 28 };
+  const days = daysSince(fryer.lastBoilOut);
+
+  if (days >= rules.overdueDays) return "overdue";
+  if (days >= rules.neededDays) return "needed";
+  return "ok";
+}
+
+function getStatusLabel(status) {
+  if (status === "needed") return "Needed";
+  if (status === "overdue") return "Overdue";
+  return "OK";
+}
+
+function render() {
+  const data = getData();
+  const grid = document.getElementById("fryerGrid");
+  grid.innerHTML = "";
+
+  let fryers = data.fryers.map(fryer => {
+    const days = daysSince(fryer.lastBoilOut);
+    const status = getStatus(fryer, data.settings);
+    return { ...fryer, days, status };
+  });
+
+  fryers.sort((a, b) => b.days - a.days);
+
+  if (currentFilter !== "all") {
+    fryers = fryers.filter(fryer => fryer.status === currentFilter);
+  }
+
+  fryers.forEach(fryer => {
+    const card = document.createElement("a");
+    card.className = `card ${fryer.status}`;
+    card.href = `fryer.html?id=${fryer.id}`;
+
+    card.innerHTML = `
+      <div>
+        <div class="fryer-id">${fryer.name}</div>
+        <div class="status">${getStatusLabel(fryer.status)}</div>
+      </div>
+      <div>
+        <div class="label">Last Boil Out</div>
+        <div class="value">${formatDate(fryer.lastBoilOut)}</div>
+        <div class="meta">
+          ${fryer.days} day${fryer.days === 1 ? "" : "s"} ago<br>
+          ${fryer.type}
+        </div>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  const updated = new Date(data.updatedAt);
+  document.getElementById("updatedAt").textContent =
+    `Last updated: ${updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+}
+
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    currentFilter = btn.dataset.filter;
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>

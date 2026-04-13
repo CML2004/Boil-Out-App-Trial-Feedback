@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fryer Preview</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#f4faff;
+      --surface:#ffffff;
+      --surface-2:#e3f0f8;
+      --surface-3:#d7e4ec;
+      --text:#111d23;
+      --muted:#4c616c;
+      --primary:#ba002e;
+      --primary-strong:#e5173f;
+      --ok:#006864;
+      --needed:#b7791f;
+      --danger:#ba1a1a;
+      --preview:#0a3c60;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, sans-serif;
+    }
+
+    .preview-banner{
+      background:var(--preview);
+      color:#fff;
+      padding:10px 16px;
+      text-align:center;
+      font-size:13px;
+      font-weight:700;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    .headline {
+      font-family: "Space Grotesk", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+    }
+
+    .topbar {
+      height: 64px;
+      border-bottom: 4px solid var(--primary);
+      background: #f8fcff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      gap: 12px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .back {
+      border: 0;
+      background: transparent;
+      color: var(--primary);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 28px;
+      color: var(--primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .topbar a {
+      color: var(--primary);
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .wrap {
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 20px 16px 28px;
+    }
+
+    .status-card {
+      background: var(--surface);
+      border-left: 8px solid var(--danger);
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .status-card.ok { border-color: var(--ok); }
+    .status-card.needed { border-color: var(--needed); }
+    .status-card.overdue { border-color: var(--danger); }
+
+    .status-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .status-word {
+      margin: 0;
+      font-size: 44px;
+      line-height: 0.95;
+    }
+
+    .status-word.ok { color: var(--ok); }
+    .status-word.needed { color: var(--needed); }
+    .status-word.overdue { color: var(--danger); }
+
+    .status-icon {
+      font-size: 48px;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .status-icon.ok { color: var(--ok); }
+    .status-icon.needed { color: var(--needed); }
+    .status-icon.overdue { color: var(--danger); }
+
+    .last-box {
+      background: var(--surface-2);
+      padding: 16px;
+    }
+
+    .last-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .last-value {
+      font-size: 28px;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+    }
+
+    .meta-line {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .actions {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .action-btn {
+      width: 100%;
+      border: 0;
+      cursor: pointer;
+      min-height: 84px;
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: white;
+      text-align: left;
+    }
+
+    .action-btn.primary { background: var(--primary-strong); }
+    .action-btn.secondary { background: var(--needed); }
+
+    .action-btn span:first-child {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -0.04em;
+    }
+
+    .action-btn span:last-child {
+      font-size: 26px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-left: 10px;
+    }
+
+    .dropdown-section {
+      margin-top: 18px;
+      border-top: 2px solid var(--surface-3);
+      padding-top: 10px;
+    }
+
+    .dropdown-toggle {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .dropdown-toggle-title {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+      color: var(--muted);
+    }
+
+    .dropdown-toggle-icon {
+      font-size: 24px;
+      color: var(--muted);
+      transition: transform 180ms ease;
+    }
+
+    .dropdown-toggle.open .dropdown-toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-content {
+      display: none;
+      padding-top: 8px;
+    }
+
+    .dropdown-content.open {
+      display: block;
+    }
+
+    .tool-box {
+      background: var(--surface);
+      border: 1px solid var(--surface-3);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .tool-title {
+      margin: 0 0 8px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+    }
+
+    .tool-desc {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 14px 12px;
+      border: 1px solid var(--surface-3);
+      background: white;
+      font: inherit;
+      resize: vertical;
+    }
+
+    textarea { min-height: 88px; }
+
+    .inline-actions, .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      border: 0;
+      padding: 14px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: var(--surface-3);
+      color: var(--text);
+    }
+
+    .error-note {
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--danger);
+      display: none;
+    }
+
+    .error-note.show { display: block; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17,29,35,0.55);
+      display: none;
+      align-items: end;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: 100%;
+      max-width: 460px;
+      background: var(--surface);
+      padding: 20px 16px 24px;
+      border-top: 4px solid var(--primary);
+    }
+
+    .modal h2 {
+      margin: 0 0 12px;
+      font-size: 28px;
+    }
+
+    .modal p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 24px;
+      transform: translateX(-50%) translateY(-8px);
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid var(--surface-3);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 18px rgba(17,29,35,0.12);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+      z-index: 2000;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--ok);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .toast-text {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .history-empty {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .history-item {
+      background: var(--surface);
+      border: 1px solid var(--surface-3);
+      padding: 12px;
+    }
+
+    .history-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .history-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .history-notes {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 420px) {
+      .topbar h1 { font-size: 24px; }
+      .status-word { font-size: 38px; }
+      .action-btn span:first-child { font-size: 22px; }
+      .inline-actions, .modal-actions { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-banner">Preview Mode — Sample Data Only</div>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="back" onclick="history.back()">←</button>
+      <h1 class="headline" id="pageTitle">Fryer 1</h1>
+    </div>
+    <a href="index.html">Dashboard</a>
+  </header>
+
+  <main class="wrap">
+    <section class="status-card" id="statusCard">
+      <div class="status-top">
+        <div>
+          <div class="eyebrow">Current Status</div>
+          <h2 class="headline status-word" id="statusWord">Overdue</h2>
+        </div>
+        <div class="status-icon" id="statusIcon">!</div>
+      </div>
+
+      <div class="last-box">
+        <div class="last-label">Last Boil Out</div>
+        <div class="last-value" id="lastBoilOutValue">May 2</div>
+        <div class="meta-line" id="fryerMetaLine"></div>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button class="action-btn primary" id="logBoilOutBtn">
+        <span>Log Boil Out</span>
+        <span>→</span>
+      </button>
+
+      <button class="action-btn secondary" id="boilOutNeededBtn">
+        <span>Boil Out Needed</span>
+        <span>!</span>
+      </button>
+    </section>
+
+    <section class="dropdown-section">
+      <button class="dropdown-toggle" id="historyToggle" type="button">
+        <span class="dropdown-toggle-title">Boil Out History</span>
+        <span class="dropdown-toggle-icon">⌄</span>
+      </button>
+
+      <div class="dropdown-content" id="historyContent">
+        <div class="history-list" id="historyList"></div>
+      </div>
+    </section>
+
+    <section class="dropdown-section">
+      <button class="dropdown-toggle" id="leaderToggle" type="button">
+        <span class="dropdown-toggle-title">Leader Tools</span>
+        <span class="dropdown-toggle-icon">⌄</span>
+      </button>
+
+      <div class="dropdown-content" id="leaderContent">
+        <div class="tool-box">
+          <h3 class="tool-title">Set Last Boil Out</h3>
+          <p class="tool-desc">Manually set the most recent boil-out date for this fryer.</p>
+
+          <div class="field">
+            <label for="manualDate">Last Boil Out Date</label>
+            <input id="manualDate" type="date" />
+          </div>
+
+          <div class="field">
+            <label for="manualDateInitials">Initials</label>
+            <input id="manualDateInitials" type="text" maxlength="5" placeholder="e.g. CML" />
+          </div>
+
+          <div class="field">
+            <label for="manualDateNotes">Notes (Optional)</label>
+            <textarea id="manualDateNotes" placeholder="Why was this date set manually?"></textarea>
+          </div>
+
+          <div class="inline-actions">
+            <button class="btn btn-secondary" type="button" id="manualDateClearBtn">Clear</button>
+            <button class="btn btn-primary" type="button" id="manualDateSaveBtn">Save Date</button>
+          </div>
+        </div>
+
+        <div class="tool-box">
+          <h3 class="tool-title">Clear Boil Out Needed</h3>
+          <p class="tool-desc">Remove the current boil-out-needed flag for this fryer.</p>
+
+          <div class="field">
+            <label for="clearReason">Reason</label>
+            <select id="clearReason">
+              <option value="">Select a reason</option>
+              <option value="completed">Boil-out completed</option>
+              <option value="flag-added-in-error">Flag added in error</option>
+              <option value="issue-resolved">Issue resolved without boil-out</option>
+              <option value="leadership-review">Leadership review / override</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="clearInitials">Initials</label>
+            <input id="clearInitials" type="text" maxlength="5" placeholder="e.g. CML" />
+          </div>
+
+          <div class="field">
+            <label for="clearNotes">Notes (Optional)</label>
+            <textarea id="clearNotes" placeholder="Add a short note if needed"></textarea>
+          </div>
+
+          <div class="inline-actions">
+            <button class="btn btn-secondary" type="button" id="clearFlagClearBtn">Clear</button>
+            <button class="btn btn-primary" type="button" id="clearFlagSaveBtn">Clear Flag</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="logModal">
+    <div class="modal">
+      <h2 class="headline">Log Boil Out</h2>
+      <p>Enter initials to simulate logging this boil-out.</p>
+
+      <div class="field">
+        <label for="logInitialsInput">Initials</label>
+        <input id="logInitialsInput" type="text" maxlength="5" placeholder="e.g. CML" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="logCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="logSubmitBtn">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="neededModal">
+    <div class="modal">
+      <h2 class="headline">Boil Out Needed</h2>
+      <p>Select the reason and enter initials to simulate this action.</p>
+
+      <div class="field">
+        <label for="neededReasonSelect">Reason</label>
+        <select id="neededReasonSelect">
+          <option value="">Select a reason</option>
+          <option value="oil-quality">Oil quality degraded</option>
+          <option value="dark-oil">Oil excessively dark</option>
+          <option value="excess-buildup">Excess buildup / residue</option>
+          <option value="contamination">Contamination</option>
+          <option value="smoke-odor">Smoke / odor issue</option>
+          <option value="leadership-direction">Leadership direction</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="neededNotesInput">Notes (Optional)</label>
+        <textarea id="neededNotesInput" placeholder="Add a short note if needed"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="neededInitialsInput">Initials</label>
+        <input id="neededInitialsInput" type="text" maxlength="5" placeholder="e.g. CML" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="neededCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="neededSubmitBtn">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="leaderPinModal">
+    <div class="modal">
+      <h2 class="headline">Leader Tools</h2>
+      <p>Enter the security PIN to preview leader-only controls.</p>
+
+      <div class="field">
+        <label for="leaderPinInput">Security Pin</label>
+        <input id="leaderPinInput" type="password" placeholder="Enter PIN" />
+      </div>
+
+      <div class="error-note" id="leaderPinError"></div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="leaderPinCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="leaderPinSubmitBtn">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="successToast">
+    <div class="toast-check">✓</div>
+    <div class="toast-text" id="successToastText">Saved</div>
+  </div>
+
+  <script src="demo-data.js"></script>
+  <script>
+    const LEADER_PIN = "CFA00756";
+    let leaderToolsUnlocked = false;
+    let successToastTimer = null;
+
+    const params = new URLSearchParams(window.location.search);
+    const fryerId = Number(params.get("id") || "1");
+
+    function getData() {
+      return JSON.parse(JSON.stringify(window.DEMO_DATA));
+    }
+
+    function getFryer() {
+      const data = getData();
+      return data.fryers.find(f => f.id === fryerId);
+    }
+
+    function getRulesForFryer(fryer, settings) {
+      return settings.typeRules[fryer.type] || { neededDays: 22, overdueDays: 28 };
+    }
+
+    function daysSince(dateString) {
+      const now = new Date();
+      const then = new Date(dateString + "T00:00:00");
+      const diffMs = now - then;
+      return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    }
+
+    function formatDate(dateString) {
+      const d = new Date(dateString + "T00:00:00");
+      return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    }
+
+    function formatTimestamp(timestamp) {
+      const d = new Date(timestamp);
+      return d.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+
+    function getStatus(fryer, settings) {
+      if (fryer.needsBoilOut) return "needed";
+      const rules = getRulesForFryer(fryer, settings);
+      const days = daysSince(fryer.lastBoilOut);
+      if (days >= rules.overdueDays) return "overdue";
+      if (days >= rules.neededDays) return "needed";
+      return "ok";
+    }
+
+    function statusLabel(status) {
+      if (status === "needed") return "Needed";
+      if (status === "overdue") return "Overdue";
+      return "Operational";
+    }
+
+    function statusIcon(status) {
+      if (status === "needed") return "!";
+      if (status === "overdue") return "!";
+      return "✓";
+    }
+
+    function renderHistory() {
+      const fryer = getFryer();
+      const historyList = document.getElementById("historyList");
+      historyList.innerHTML = "";
+
+      if (!fryer.history || fryer.history.length === 0) {
+        historyList.innerHTML = `<div class="history-empty">No history yet.</div>`;
+        return;
+      }
+
+      fryer.history.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "history-item";
+
+        const extraLines = [];
+        if (item.initials) extraLines.push(`Initials: ${item.initials}`);
+        if (item.reason) extraLines.push(`Reason: ${item.reason}`);
+        if (item.dateValue) extraLines.push(`Date Set: ${formatDate(item.dateValue)}`);
+        if (item.notes) extraLines.push(`Notes: ${item.notes}`);
+
+        el.innerHTML = `
+          <div class="history-title">${item.action}</div>
+          <div class="history-meta">${formatTimestamp(item.timestamp)}</div>
+          ${extraLines.length ? `<div class="history-notes">${extraLines.join("\n")}</div>` : ``}
+        `;
+
+        historyList.appendChild(el);
+      });
+    }
+
+    function render() {
+      const data = getData();
+      const fryer = data.fryers.find(f => f.id === fryerId);
+      if (!fryer) return;
+
+      const rules = getRulesForFryer(fryer, data.settings);
+      const status = getStatus(fryer, data.settings);
+      const days = daysSince(fryer.lastBoilOut);
+
+      document.title = `${fryer.name}`;
+      document.getElementById("pageTitle").textContent = fryer.name;
+
+      const statusCard = document.getElementById("statusCard");
+      statusCard.className = `status-card ${status}`;
+
+      const statusWord = document.getElementById("statusWord");
+      statusWord.textContent = statusLabel(status);
+      statusWord.className = `headline status-word ${status}`;
+
+      const statusIconEl = document.getElementById("statusIcon");
+      statusIconEl.textContent = statusIcon(status);
+      statusIconEl.className = `status-icon ${status}`;
+
+      document.getElementById("lastBoilOutValue").textContent = formatDate(fryer.lastBoilOut);
+      document.getElementById("fryerMetaLine").textContent =
+        `${fryer.type} • ${days} day${days === 1 ? "" : "s"} since last boil out • Needed at ${rules.neededDays} days • Overdue at ${rules.overdueDays} days`;
+
+      renderHistory();
+    }
+
+    const logBoilOutBtn = document.getElementById("logBoilOutBtn");
+    const boilOutNeededBtn = document.getElementById("boilOutNeededBtn");
+
+    const logModal = document.getElementById("logModal");
+    const neededModal = document.getElementById("neededModal");
+    const leaderPinModal = document.getElementById("leaderPinModal");
+
+    const logInitialsInput = document.getElementById("logInitialsInput");
+    const neededReasonSelect = document.getElementById("neededReasonSelect");
+    const neededNotesInput = document.getElementById("neededNotesInput");
+    const neededInitialsInput = document.getElementById("neededInitialsInput");
+
+    const logCancelBtn = document.getElementById("logCancelBtn");
+    const logSubmitBtn = document.getElementById("logSubmitBtn");
+    const neededCancelBtn = document.getElementById("neededCancelBtn");
+    const neededSubmitBtn = document.getElementById("neededSubmitBtn");
+
+    const historyToggle = document.getElementById("historyToggle");
+    const historyContent = document.getElementById("historyContent");
+
+    const leaderToggle = document.getElementById("leaderToggle");
+    const leaderContent = document.getElementById("leaderContent");
+
+    const leaderPinInput = document.getElementById("leaderPinInput");
+    const leaderPinError = document.getElementById("leaderPinError");
+    const leaderPinCancelBtn = document.getElementById("leaderPinCancelBtn");
+    const leaderPinSubmitBtn = document.getElementById("leaderPinSubmitBtn");
+
+    const manualDateClearBtn = document.getElementById("manualDateClearBtn");
+    const manualDateSaveBtn = document.getElementById("manualDateSaveBtn");
+
+    const clearFlagClearBtn = document.getElementById("clearFlagClearBtn");
+    const clearFlagSaveBtn = document.getElementById("clearFlagSaveBtn");
+
+    const successToast = document.getElementById("successToast");
+    const successToastText = document.getElementById("successToastText");
+
+    function openModal(modalEl, focusEl) {
+      modalEl.classList.add("open");
+      if (focusEl) setTimeout(() => focusEl.focus(), 50);
+    }
+
+    function closeModal(modalEl) {
+      modalEl.classList.remove("open");
+    }
+
+    function showSuccessToast(message) {
+      successToastText.textContent = message;
+      successToast.classList.add("show");
+
+      if (successToastTimer) clearTimeout(successToastTimer);
+
+      successToastTimer = setTimeout(() => {
+        successToast.classList.remove("show");
+      }, 1500);
+    }
+
+    function clearLogModal() {
+      logInitialsInput.value = "";
+    }
+
+    function clearNeededModal() {
+      neededReasonSelect.value = "";
+      neededNotesInput.value = "";
+      neededInitialsInput.value = "";
+    }
+
+    function clearLeaderPinState() {
+      leaderPinInput.value = "";
+      leaderPinError.textContent = "";
+      leaderPinError.classList.remove("show");
+    }
+
+    historyToggle.addEventListener("click", () => {
+      const isOpen = historyContent.classList.toggle("open");
+      historyToggle.classList.toggle("open", isOpen);
+    });
+
+    logBoilOutBtn.addEventListener("click", () => {
+      openModal(logModal, logInitialsInput);
+    });
+
+    boilOutNeededBtn.addEventListener("click", () => {
+      openModal(neededModal, neededReasonSelect);
+    });
+
+    leaderToggle.addEventListener("click", () => {
+      if (leaderToolsUnlocked) {
+        const isOpen = leaderContent.classList.toggle("open");
+        leaderToggle.classList.toggle("open", isOpen);
+        return;
+      }
+
+      clearLeaderPinState();
+      openModal(leaderPinModal, leaderPinInput);
+    });
+
+    leaderPinCancelBtn.addEventListener("click", () => {
+      clearLeaderPinState();
+      closeModal(leaderPinModal);
+    });
+
+    leaderPinSubmitBtn.addEventListener("click", () => {
+      const enteredPin = leaderPinInput.value.trim();
+
+      if (enteredPin !== LEADER_PIN) {
+        leaderPinError.textContent = "Incorrect PIN.";
+        leaderPinError.classList.add("show");
+        leaderPinInput.focus();
+        leaderPinInput.select();
+        return;
+      }
+
+      leaderToolsUnlocked = true;
+      clearLeaderPinState();
+      closeModal(leaderPinModal);
+
+      leaderContent.classList.add("open");
+      leaderToggle.classList.add("open");
+    });
+
+    leaderPinInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") leaderPinSubmitBtn.click();
+    });
+
+    logCancelBtn.addEventListener("click", () => {
+      closeModal(logModal);
+      clearLogModal();
+    });
+
+    neededCancelBtn.addEventListener("click", () => {
+      closeModal(neededModal);
+      clearNeededModal();
+    });
+
+    logSubmitBtn.addEventListener("click", () => {
+      const initials = logInitialsInput.value.trim();
+      if (!initials) {
+        alert("Enter initials first.");
+        logInitialsInput.focus();
+        return;
+      }
+
+      closeModal(logModal);
+      clearLogModal();
+      showSuccessToast("Preview mode only — no changes saved");
+    });
+
+    neededSubmitBtn.addEventListener("click", () => {
+      const reason = neededReasonSelect.value;
+      const initials = neededInitialsInput.value.trim();
+
+      if (!reason) {
+        alert("Select a reason first.");
+        neededReasonSelect.focus();
+        return;
+      }
+
+      if (!initials) {
+        alert("Enter initials first.");
+        neededInitialsInput.focus();
+        return;
+      }
+
+      closeModal(neededModal);
+      clearNeededModal();
+      showSuccessToast("Preview mode only — no changes saved");
+    });
+
+    manualDateClearBtn.addEventListener("click", () => {
+      document.getElementById("manualDate").value = "";
+      document.getElementById("manualDateInitials").value = "";
+      document.getElementById("manualDateNotes").value = "";
+    });
+
+    manualDateSaveBtn.addEventListener("click", () => {
+      const dateValue = document.getElementById("manualDate").value;
+      const initials = document.getElementById("manualDateInitials").value.trim();
+
+      if (!dateValue) {
+        alert("Enter a boil-out date first.");
+        document.getElementById("manualDate").focus();
+        return;
+      }
+
+      if (!initials) {
+        alert("Enter initials first.");
+        document.getElementById("manualDateInitials").focus();
+        return;
+      }
+
+      showSuccessToast("Preview mode only — no changes saved");
+    });
+
+    clearFlagClearBtn.addEventListener("click", () => {
+      document.getElementById("clearReason").value = "";
+      document.getElementById("clearInitials").value = "";
+      document.getElementById("clearNotes").value = "";
+    });
+
+    clearFlagSaveBtn.addEventListener("click", () => {
+      const reason = document.getElementById("clearReason").value;
+      const initials = document.getElementById("clearInitials").value.trim();
+
+      if (!reason) {
+        alert("Select a reason first.");
+        document.getElementById("clearReason").focus();
+        return;
+      }
+
+      if (!initials) {
+        alert("Enter initials first.");
+        document.getElementById("clearInitials").focus();
+        return;
+      }
+
+      showSuccessToast("Preview mode only — no changes saved");
+    });
+
+    [logModal, neededModal, leaderPinModal].forEach((modal) => {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          closeModal(modal);
+
+          if (modal === logModal) clearLogModal();
+          if (modal === neededModal) clearNeededModal();
+          if (modal === leaderPinModal) clearLeaderPinState();
+        }
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
