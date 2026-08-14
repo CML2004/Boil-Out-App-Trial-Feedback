@@ -55,3 +55,7 @@ pnpm build
 - Environment variables: none required
 
 The `public/_redirects` rule preserves client-side routing on direct links and page refreshes.
+
+The application stylesheet is included in the JavaScript bundle so the demo
+cannot render without its visual system if a host or stale cache misses a
+separate generated CSS asset.
