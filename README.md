@@ -6,10 +6,10 @@ The demo mirrors the production store, fryer, leadership, and development experi
 
 ## Guided tour
 
-The tour starts automatically whenever the demo loads. It can auto-play through the complete workflow or be controlled with Next, Back, Pause, and Skip. It covers:
+The tour starts automatically whenever the demo loads, but autoplay is off by default. Visitors press the highlighted application controls, complete forms, and make simulated changes themselves. Successful interactions advance the tour; informational steps use Next and Back, and the entire tour can be skipped.
 
 - Store-level status cards and filters
-- Individual fryer status and NFC-oriented navigation
+- Individual fryer status and store-dashboard navigation
 - Completed boil-out logging
 - Needed flags, reasons, notes, and email behavior
 - History and leader correction tools

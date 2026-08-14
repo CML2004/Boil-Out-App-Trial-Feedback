@@ -21,7 +21,7 @@ function measure(element: Element): HighlightRect {
 }
 
 export function TourOverlay() {
-  const { active, autoPlay, index, step, next, previous, skip, setAutoPlay } = useTour();
+  const { active, autoPlay, index, step, next, previous, skip, completeStep, setAutoPlay } = useTour();
   const [highlight, setHighlight] = useState<HighlightRect | null>(null);
 
   useEffect(() => {
@@ -67,6 +67,19 @@ export function TourOverlay() {
     };
   }, [active, step.id, step.target]);
 
+  useEffect(() => {
+    if (!active || !step.target || (step.interaction !== "click" && step.interaction !== "change")) return;
+    const eventName = step.interaction;
+    const handleInteraction = (event: Event) => {
+      const target = document.querySelector(`[data-tour-id="${step.target}"]`);
+      if (target && event.target instanceof Node && target.contains(event.target)) {
+        window.setTimeout(() => completeStep(step.id), 0);
+      }
+    };
+    document.addEventListener(eventName, handleInteraction);
+    return () => document.removeEventListener(eventName, handleInteraction);
+  }, [active, completeStep, step.id, step.interaction, step.target]);
+
   const cardPosition = useMemo(() => highlight && highlight.top > window.innerHeight * 0.5 ? "top" : "bottom", [highlight]);
   if (!active) return null;
 
@@ -87,14 +100,14 @@ export function TourOverlay() {
           <span>Interactive tour</span>
           <span>{index + 1} / {TOUR_STEPS.length}</span>
         </div>
-        <div className="tour-progress"><span key={step.id} className={autoPlay ? "playing" : ""} /></div>
+        <div className="tour-progress"><span key={step.id} className={autoPlay && !step.interaction ? "playing" : ""} /></div>
         <h2>{step.title}</h2>
         <p>{step.body}</p>
         <div className="tour-actions">
           <button className="button ghost small" type="button" onClick={skip}>Skip</button>
-          <button className="button ghost small" type="button" onClick={() => setAutoPlay(!autoPlay)}>{autoPlay ? "Pause" : "Auto-play"}</button>
+          <button className="button ghost small" type="button" onClick={() => setAutoPlay(!autoPlay)} disabled={Boolean(step.interaction)}>{step.interaction ? "Hands-on step" : autoPlay ? "Pause" : "Auto-play"}</button>
           <button className="button ghost small" type="button" onClick={previous} disabled={index === 0}>Back</button>
-          <button className="button primary small" type="button" onClick={next}>{index === TOUR_STEPS.length - 1 ? "Explore demo" : "Next"}</button>
+          <button className="button primary small" type="button" onClick={next} disabled={Boolean(step.interaction)}>{step.interaction ? "Complete action" : index === TOUR_STEPS.length - 1 ? "Explore demo" : "Next"}</button>
         </div>
       </section>
     </div>

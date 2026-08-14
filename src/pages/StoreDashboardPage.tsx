@@ -36,15 +36,15 @@ export function StoreDashboardPage() {
             <div className="last-updated">{store.config.nickname} • Demo data is live in this tab</div>
           </div>
           <div className="header-right">
-            <button className="header-btn" type="button" onClick={() => setShowInstall(true)}>Add to Home Screen</button>
-            <Link className="settings-link" to={`/leadership/${storeCode}`} title="Leadership Dashboard" aria-label="Leadership Dashboard">⚙</Link>
+            <button className="header-btn" type="button" data-tour-id="install-button" onClick={() => setShowInstall(true)}>Add to Home Screen</button>
+            <Link className="settings-link" data-tour-id="leadership-link" to={`/leadership/${storeCode}`} title="Leadership Dashboard" aria-label="Leadership Dashboard">⚙</Link>
           </div>
         </header>
 
         <div className="status-banner trial show">Interactive Demo Mode — No production data is changed</div>
         <div className="controls" data-tour-id="dashboard-filters" aria-label="Filter fryers">
           {(["all", "ok", "needed", "overdue"] as Filter[]).map((value) => (
-            <button key={value} className={`filter-btn ${filter === value ? "active" : ""}`} onClick={() => setFilter(value)} type="button">
+            <button key={value} className={`filter-btn ${filter === value ? "active" : ""}`} data-tour-id={value === "needed" ? "filter-needed" : undefined} onClick={() => setFilter(value)} type="button">
               {value.toUpperCase()} ({counts[value]})
             </button>
           ))}
@@ -53,7 +53,7 @@ export function StoreDashboardPage() {
         {cards.length ? (
           <section className="grid" data-tour-id="dashboard-grid">
             {cards.map(({ fryer, status, days }) => (
-              <Link key={fryer.id} className={`card ${status}`} to={`/fryer/${storeCode}/${fryer.id}`}>
+              <Link key={fryer.id} className={`card ${status}`} data-tour-id={fryer.id === "3" ? "fryer-card-3" : undefined} to={`/fryer/${storeCode}/${fryer.id}`}>
                 <div><div className="fryer-id">{fryer.name}</div><div className="status">{status === "ok" ? "OPERATIONAL" : status.toUpperCase()}</div></div>
                 <div>
                   <div className="label">Last Boil Out</div>
@@ -71,7 +71,7 @@ export function StoreDashboardPage() {
         <p>This is how a store can keep its dashboard available on a kitchen iPad or tablet.</p>
         <ol className="modal-steps"><li>Open the browser Share or menu button.</li><li>Select Add to Home Screen.</li><li>Confirm the OpsTrack shortcut.</li></ol>
         <div className="install-url">{window.location.href}</div>
-        <div className="modal-actions"><button className="btn btn-primary" type="button" onClick={() => setShowInstall(false)}>Got It</button></div>
+        <div className="modal-actions"><button className="btn btn-primary" data-tour-id="install-close" type="button" onClick={() => setShowInstall(false)}>Got It</button></div>
       </Modal>
     </div>
   );

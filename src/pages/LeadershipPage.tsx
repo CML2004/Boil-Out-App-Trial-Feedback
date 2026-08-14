@@ -3,12 +3,14 @@ import { Link, useParams } from "react-router-dom";
 import { AppShell } from "../components/AppShell";
 import type { EmailRecipient, Fryer, FryerTypeRule, StoreConfig } from "../domain/types";
 import { useDemoData } from "../state/DemoDataContext";
+import { useTour } from "../state/TourContext";
 
 type Notice = { type: "success" | "error"; text: string } | null;
 
 export function LeadershipPage() {
   const storeCode = String(useParams().storeCode || "CFA02851").toUpperCase();
   const { getStore, updateFryer, addFryer, deleteFryer, saveConfig } = useDemoData();
+  const { completeStep } = useTour();
   const store = getStore(storeCode);
   const [notice, setNotice] = useState<Notice>(null);
 
@@ -45,11 +47,12 @@ export function LeadershipPage() {
           <div className="section-heading"><div><p className="eyebrow">Notifications</p><h2>Email recipients</h2></div><span>Email feature live</span></div>
           <div className="recipient-grid">{store.config.usersForEmailAlerts.map((recipient, index) => <RecipientEditor key={`${recipient.email}-${index}`} recipient={recipient} index={index} config={store.config} saveConfig={saveStoreConfig} />)}</div>
           <AddRecipientForm config={store.config} saveConfig={saveStoreConfig} setNotice={setNotice} />
-          <form className="form-stack tool-box" onSubmit={async (event) => {
+          <form className="form-stack tool-box" data-tour-id="reminder-form" onSubmit={async (event) => {
             event.preventDefault();
             const form = new FormData(event.currentTarget);
             const days = Math.max(0, Number(form.get("reminderDays")) || 0);
             await saveStoreConfig({ ...store.config, alertSettings: { overdueReminderDays: days } }, "Reminder schedule saved.");
+            completeStep("reminder-form");
           }}>
             <label>Overdue reminder interval<input name="reminderDays" type="number" min="0" defaultValue={store.config.alertSettings.overdueReminderDays} /></label>
             <p className="field-help">A value of 3 resends overdue reminders every three days.</p>
@@ -60,7 +63,7 @@ export function LeadershipPage() {
         <section className="panel report-panel" data-tour-id="leadership-reporting">
           <div><p className="eyebrow">Reporting</p><h2>Boil-out completions</h2></div>
           <p>Export simulated completion totals, dates, initials, and fryer names as a CSV file.</p>
-          <button className="button primary" type="button" onClick={() => exportCompletionCsv(storeCode, store.fryers, setNotice)}>Export Demo CSV</button>
+          <button className="button primary" data-tour-id="export-button" type="button" onClick={() => exportCompletionCsv(storeCode, store.fryers, setNotice)}>Export Demo CSV</button>
         </section>
       </div>
     </AppShell>
@@ -94,18 +97,20 @@ function FryerEditor({ storeCode, fryer, config, updateFryer, deleteFryer, setNo
 }
 
 function AddFryerForm({ storeCode, fryers, config, addFryer, setNotice }: { storeCode: string; fryers: Fryer[]; config: StoreConfig; addFryer: ReturnType<typeof useDemoData>["addFryer"]; setNotice: (notice: Notice) => void }) {
+  const { completeStep } = useTour();
   const [name, setName] = useState(""); const [type, setType] = useState(Object.keys(config.typeRules)[0]); const [date, setDate] = useState(""); const [busy, setBusy] = useState(false);
-  return <form className="add-row" onSubmit={async (event) => {
+  return <form className="add-row" data-tour-id="add-fryer-form" onSubmit={async (event) => {
     event.preventDefault(); setBusy(true);
     const nextId = String(Math.max(0, ...fryers.map((item) => Number(item.id) || 0)) + 1);
-    try { await addFryer(storeCode, { id: nextId, name: name.trim(), type, lastBoilOut: date, needsBoilOut: false, needsReason: "", needsNotes: "", history: [] }); setName(""); setDate(""); setNotice({ type: "success", text: "Demo fryer added." }); }
+    try { await addFryer(storeCode, { id: nextId, name: name.trim(), type, lastBoilOut: date, needsBoilOut: false, needsReason: "", needsNotes: "", history: [] }); setName(""); setDate(""); setNotice({ type: "success", text: "Demo fryer added." }); completeStep("add-fryer"); }
     finally { setBusy(false); }
   }}><strong>Add fryer</strong><label>Name<input value={name} onChange={(event) => setName(event.target.value)} required /></label><label>Type<select value={type} onChange={(event) => setType(event.target.value)}>{Object.keys(config.typeRules).map((item) => <option key={item}>{item}</option>)}</select></label><label>Last boil-out<input type="date" value={date} onChange={(event) => setDate(event.target.value)} required /></label><button className="button primary" disabled={busy}>{busy ? "Adding…" : "Add"}</button></form>;
 }
 
 function TypeRuleEditor({ storeCode, originalName, rules, config, fryers, updateFryer, saveConfig, setNotice }: { storeCode: string; originalName: string; rules: FryerTypeRule; config: StoreConfig; fryers: Fryer[]; updateFryer: ReturnType<typeof useDemoData>["updateFryer"]; saveConfig: (config: StoreConfig, message?: string) => Promise<void>; setNotice: (notice: Notice) => void }) {
+  const { completeStep } = useTour();
   const [name, setName] = useState(originalName); const [needed, setNeeded] = useState(rules.neededDays); const [overdue, setOverdue] = useState(rules.overdueDays); const [busy, setBusy] = useState(false);
-  return <form className="admin-row type-row" onSubmit={async (event) => {
+  return <form className="admin-row type-row" data-tour-id="timing-rule-form" onSubmit={async (event) => {
     event.preventDefault();
     if (!name.trim() || needed < 0 || overdue < needed) { setNotice({ type: "error", text: "Overdue days must be at least Needed days." }); return; }
     setBusy(true);
@@ -113,6 +118,7 @@ function TypeRuleEditor({ storeCode, originalName, rules, config, fryers, update
       const typeRules = { ...config.typeRules }; delete typeRules[originalName]; typeRules[name.trim()] = { neededDays: needed, overdueDays: overdue };
       if (name.trim() !== originalName) await Promise.all(fryers.filter((fryer) => fryer.type === originalName).map((fryer) => updateFryer(storeCode, fryer.id, { type: name.trim() })));
       await saveConfig({ ...config, typeRules }, `${name.trim()} timing rules saved.`);
+      completeStep("timing-rule");
     } finally { setBusy(false); }
   }}><label>Type name<input value={name} onChange={(event) => setName(event.target.value)} required /></label><label>Needed days<input type="number" min="0" value={needed} onChange={(event) => setNeeded(Number(event.target.value))} /></label><label>Overdue days<input type="number" min={needed} value={overdue} onChange={(event) => setOverdue(Number(event.target.value))} /></label><div className="row-actions"><button className="button primary small" disabled={busy}>{busy ? "Saving…" : "Save"}</button><button className="button danger small" type="button" onClick={async () => { if (fryers.some((fryer) => fryer.type === originalName)) { setNotice({ type: "error", text: "That type is still assigned to a fryer." }); return; } const typeRules = { ...config.typeRules }; delete typeRules[originalName]; await saveConfig({ ...config, typeRules }, `${originalName} removed.`); }}>Delete</button></div></form>;
 }
@@ -124,7 +130,7 @@ function AddTypeForm({ config, saveConfig }: { config: StoreConfig; saveConfig: 
 
 function RecipientEditor({ recipient, index, config, saveConfig }: { recipient: EmailRecipient; index: number; config: StoreConfig; saveConfig: (config: StoreConfig, message?: string) => Promise<void> }) {
   const update = async (fields: Partial<EmailRecipient>) => saveConfig({ ...config, usersForEmailAlerts: config.usersForEmailAlerts.map((item, itemIndex) => itemIndex === index ? { ...item, ...fields } : item) }, `${recipient.name}'s alerts updated.`);
-  return <article className="recipient-card"><div><strong>{recipient.name}</strong><span>{recipient.email}</span></div><div className="toggle-list"><label><input type="checkbox" checked={recipient.alertsEnabled} onChange={(event) => update({ alertsEnabled: event.target.checked, assignmentAlerts: event.target.checked, overdueAlerts: event.target.checked })} /> All alerts</label><label><input type="checkbox" checked={recipient.assignmentAlerts} onChange={(event) => update({ assignmentAlerts: event.target.checked })} /> Needed</label><label><input type="checkbox" checked={recipient.overdueAlerts} onChange={(event) => update({ overdueAlerts: event.target.checked })} /> Overdue</label></div><button className="button danger small" type="button" onClick={() => saveConfig({ ...config, usersForEmailAlerts: config.usersForEmailAlerts.filter((_, itemIndex) => itemIndex !== index) }, `${recipient.name} removed.`)}>Remove</button></article>;
+  return <article className="recipient-card"><div><strong>{recipient.name}</strong><span>{recipient.email}</span></div><div className="toggle-list"><label><input type="checkbox" checked={recipient.alertsEnabled} onChange={(event) => update({ alertsEnabled: event.target.checked, assignmentAlerts: event.target.checked, overdueAlerts: event.target.checked })} /> All alerts</label><label><input type="checkbox" data-tour-id="recipient-needed-toggle" checked={recipient.assignmentAlerts} onChange={(event) => update({ assignmentAlerts: event.target.checked })} /> Needed</label><label><input type="checkbox" checked={recipient.overdueAlerts} onChange={(event) => update({ overdueAlerts: event.target.checked })} /> Overdue</label></div><button className="button danger small" type="button" onClick={() => saveConfig({ ...config, usersForEmailAlerts: config.usersForEmailAlerts.filter((_, itemIndex) => itemIndex !== index) }, `${recipient.name} removed.`)}>Remove</button></article>;
 }
 
 function AddRecipientForm({ config, saveConfig, setNotice }: { config: StoreConfig; saveConfig: (config: StoreConfig, message?: string) => Promise<void>; setNotice: (notice: Notice) => void }) {

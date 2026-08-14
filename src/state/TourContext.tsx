@@ -1,10 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+export type TourInteraction = "click" | "change" | "form";
+
 export interface TourStep {
   id: string;
   path: string;
   target?: string;
+  interaction?: TourInteraction;
   title: string;
   body: string;
 }
@@ -14,104 +17,238 @@ export const TOUR_STEPS: TourStep[] = [
     id: "welcome",
     path: "/store/CFA02851",
     title: "Welcome to the interactive OpsTrack demo",
-    body: "This tour opens every major workflow using safe, simulated data. It will advance automatically, or you can use Next and Back at your own pace."
+    body: "This is a hands-on tour using safe, simulated data. Select Next to begin, then use each highlighted control yourself to move through the workflow."
   },
   {
-    id: "dashboard-statuses",
+    id: "install-button",
     path: "/store/CFA02851",
-    target: "dashboard-grid",
-    title: "See every fryer at a glance",
-    body: "Cards are ordered by urgency and show operational, needed, overdue, and manually flagged states without relying on color alone."
+    target: "install-button",
+    interaction: "click",
+    title: "Select Add to Home Screen",
+    body: "Press the highlighted button to see the instructions used for keeping the dashboard readily available on a kitchen display."
   },
   {
-    id: "dashboard-filters",
+    id: "install-close",
     path: "/store/CFA02851",
-    target: "dashboard-filters",
+    target: "install-close",
+    interaction: "click",
+    title: "Close the instructions",
+    body: "Select Got It to return to the live store view."
+  },
+  {
+    id: "filter-needed",
+    path: "/store/CFA02851",
+    target: "filter-needed",
+    interaction: "click",
     title: "Filter the kitchen view",
-    body: "Live counts make it easy to isolate fryers that need attention while the dashboard continues updating in real time."
+    body: "Press Needed to isolate fryers that currently require attention."
+  },
+  {
+    id: "open-fryer",
+    path: "/store/CFA02851",
+    target: "fryer-card-3",
+    interaction: "click",
+    title: "Open a fryer",
+    body: "Select the highlighted fryer card to open its operational record."
   },
   {
     id: "fryer-status",
     path: "/fryer/CFA02851/3",
     target: "fryer-status",
-    title: "Open an individual fryer",
-    body: "In production, an NFC tag can open this exact fryer. The page explains its status, most recent boil-out, and configured timing rules."
+    title: "Review the current status",
+    body: "This page shows the fryer status, most recent boil-out, and the timing rules configured for its equipment type."
   },
   {
-    id: "log-workflow",
+    id: "log-button",
     path: "/fryer/CFA02851/3",
-    target: "log-workflow",
-    title: "Log a completed boil-out",
-    body: "A team member enters initials and submits once. The demo updates the fryer and adds a unique history entry without contacting production services."
+    target: "log-button",
+    interaction: "click",
+    title: "Press Log Boil Out",
+    body: "Select the highlighted action to begin recording a completed boil-out."
   },
   {
-    id: "flag-workflow",
+    id: "log-form",
     path: "/fryer/CFA02851/3",
-    target: "flag-workflow",
-    title: "Flag a fryer for attention",
-    body: "Users can select a reason, add notes, and attach initials. The production app can also queue assignment email alerts from this action."
+    target: "log-form",
+    interaction: "form",
+    title: "Complete the log",
+    body: "Enter two or three initials, then press Submit. The tour continues after the simulated save succeeds."
   },
   {
-    id: "history",
-    path: "/fryer/CFA02851/4",
-    target: "history-section",
-    title: "Review the audit history",
-    body: "Every completion, manual flag, correction, and leader action remains visible with its time, initials, reason, and notes."
+    id: "log-result",
+    path: "/fryer/CFA02851/3",
+    target: "fryer-status",
+    title: "The fryer updates immediately",
+    body: "The completion resets the status and creates one uniquely identified history entry. Select Next when you are ready to flag an issue."
   },
   {
-    id: "leader-tools",
-    path: "/fryer/CFA02851/4",
-    target: "leader-tools",
-    title: "Correct operational records",
-    body: "Leader tools can set the latest boil-out date or clear a needed flag while recording who made the change and why."
+    id: "flag-button",
+    path: "/fryer/CFA02851/3",
+    target: "flag-button",
+    interaction: "click",
+    title: "Press Boil Out Needed",
+    body: "Select the highlighted action to flag the fryer for attention."
   },
   {
-    id: "leadership-equipment",
+    id: "flag-form",
+    path: "/fryer/CFA02851/3",
+    target: "flag-form",
+    interaction: "form",
+    title: "Describe the issue",
+    body: "Choose a reason, optionally add a note, enter your initials, and press Submit."
+  },
+  {
+    id: "flag-result",
+    path: "/fryer/CFA02851/3",
+    target: "fryer-status",
+    title: "The needed flag is now visible",
+    body: "The fryer status and audit record now reflect the issue. In production, enabled email notifications can also be queued from this action."
+  },
+  {
+    id: "history-toggle",
+    path: "/fryer/CFA02851/3",
+    target: "history-toggle",
+    interaction: "click",
+    title: "Open Boil Out History",
+    body: "Press the history control to review the actions you just completed."
+  },
+  {
+    id: "history-result",
+    path: "/fryer/CFA02851/3",
+    target: "history-content",
+    title: "Review the audit trail",
+    body: "Each completion, flag, correction, and leader action retains its time, initials, reason, and notes."
+  },
+  {
+    id: "leader-toggle",
+    path: "/fryer/CFA02851/3",
+    target: "leader-toggle",
+    interaction: "click",
+    title: "Open Leader Tools",
+    body: "Press Leader Tools to open the protected operational controls."
+  },
+  {
+    id: "leader-pin",
+    path: "/fryer/CFA02851/3",
+    target: "leader-pin-form",
+    interaction: "form",
+    title: "Enter the demo PIN",
+    body: "Enter 1234 and press Submit to unlock the leader controls."
+  },
+  {
+    id: "leader-clear",
+    path: "/fryer/CFA02851/3",
+    target: "leader-clear-form",
+    interaction: "form",
+    title: "Clear the needed flag",
+    body: "Choose why the flag is being cleared, enter your initials, optionally add a note, and press Clear Flag."
+  },
+  {
+    id: "leader-result",
+    path: "/fryer/CFA02851/3",
+    target: "fryer-status",
+    title: "The leader action is recorded",
+    body: "The flag is resolved and the reason is retained in history. Next, return to the store dashboard."
+  },
+  {
+    id: "dashboard-link",
+    path: "/fryer/CFA02851/3",
+    target: "dashboard-link",
+    interaction: "click",
+    title: "Return to the dashboard",
+    body: "Press Dashboard to return to the store overview."
+  },
+  {
+    id: "leadership-link",
+    path: "/store/CFA02851",
+    target: "leadership-link",
+    interaction: "click",
+    title: "Open the leadership dashboard",
+    body: "Select the highlighted settings button to manage this store."
+  },
+  {
+    id: "add-fryer",
     path: "/leadership/CFA02851",
-    target: "leadership-equipment",
-    title: "Manage store equipment",
-    body: "The leadership dashboard supports editing, adding, and removing fryers while keeping each fryer tied to a timing rule."
+    target: "add-fryer-form",
+    interaction: "form",
+    title: "Add a demo fryer",
+    body: "Enter a name, choose a type and date, then press Add. The new fryer stays only in this browser session."
   },
   {
-    id: "leadership-rules",
+    id: "timing-rule",
     path: "/leadership/CFA02851",
-    target: "leadership-rules",
-    title: "Configure timing rules",
-    body: "Each fryer type can have its own Needed and Overdue thresholds, so the dashboard reflects the store's real equipment standards."
+    target: "timing-rule-form",
+    interaction: "form",
+    title: "Save a timing rule",
+    body: "Review or adjust the Needed and Overdue thresholds, then press Save."
   },
   {
-    id: "leadership-alerts",
+    id: "recipient-toggle",
     path: "/leadership/CFA02851",
-    target: "leadership-alerts",
-    title: "Manage alert recipients",
-    body: "Leaders can choose who receives needed and overdue messages and set how often overdue reminders repeat."
+    target: "recipient-needed-toggle",
+    interaction: "change",
+    title: "Change an email preference",
+    body: "Toggle the highlighted Needed checkbox to control whether this recipient receives needed alerts."
   },
   {
-    id: "leadership-reporting",
+    id: "reminder-form",
     path: "/leadership/CFA02851",
-    target: "leadership-reporting",
-    title: "Export accountability reporting",
-    body: "Completion history can be exported as CSV with initials, dates, totals, and fryer names for leadership review."
+    target: "reminder-form",
+    interaction: "form",
+    title: "Save the reminder schedule",
+    body: "Choose how many days should pass between overdue reminders, then press Save reminder schedule."
+  },
+  {
+    id: "export-report",
+    path: "/leadership/CFA02851",
+    target: "export-button",
+    interaction: "click",
+    title: "Export a completion report",
+    body: "Press Export Demo CSV to download the simulated completion history."
   },
   {
     id: "development-overview",
     path: "/development",
     target: "development-overview",
-    title: "Monitor the full rollout",
-    body: "The development dashboard summarizes active, trial, blocked, and email-enabled stores along with basic usage activity."
+    title: "Review the full rollout",
+    body: "The development dashboard summarizes active, trial, blocked, and email-enabled stores."
+  },
+  {
+    id: "nickname-form",
+    path: "/development",
+    target: "nickname-form",
+    interaction: "form",
+    title: "Update a store nickname",
+    body: "Change the nickname—for example, to Training Store—then press Save nickname."
+  },
+  {
+    id: "development-email-toggle",
+    path: "/development",
+    target: "development-email-toggle",
+    interaction: "change",
+    title: "Change email availability",
+    body: "Toggle Email alerts live to simulate controlling email access for this store."
+  },
+  {
+    id: "blocked-tab",
+    path: "/development",
+    target: "blocked-tab",
+    interaction: "click",
+    title: "View blocked stores",
+    body: "Press Paywall blocked to switch the development dashboard view."
   },
   {
     id: "development-controls",
     path: "/development",
     target: "development-controls",
-    title: "Identify and control stores",
-    body: "Store nicknames, live access, trial mode, email availability, usage, and administrative links are managed from one place."
+    title: "Review store controls",
+    body: "Development controls include live access, trial mode, email availability, usage activity, nicknames, and administrative links."
   },
   {
     id: "finish",
     path: "/store/CFA02851",
-    title: "You have seen the full workflow",
-    body: "Explore freely, try any action, restart the tour, reset the demo data, or use Give Feedback to share what would make OpsTrack more useful."
+    title: "You completed the hands-on workflow",
+    body: "Explore freely, restart the tour, reset the simulated data, or use Give Feedback to share what would make OpsTrack more useful."
   }
 ];
 
@@ -124,6 +261,7 @@ interface TourValue {
   previous: () => void;
   skip: () => void;
   restart: () => void;
+  completeStep: (stepId: string) => void;
   setAutoPlay: (value: boolean) => void;
 }
 
@@ -134,7 +272,7 @@ export function TourProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [active, setActive] = useState(true);
-  const [autoPlay, setAutoPlay] = useState(true);
+  const [autoPlay, setAutoPlay] = useState(false);
   const [index, setIndex] = useState(0);
   const step = TOUR_STEPS[index];
 
@@ -155,17 +293,20 @@ export function TourProvider({ children }: { children: ReactNode }) {
 
   const previous = useCallback(() => setIndex((current) => Math.max(0, current - 1)), []);
   const skip = useCallback(() => { setActive(false); setAutoPlay(false); }, []);
-  const restart = useCallback(() => { setIndex(0); setActive(true); setAutoPlay(true); }, []);
+  const restart = useCallback(() => { setIndex(0); setActive(true); setAutoPlay(false); }, []);
+  const completeStep = useCallback((stepId: string) => {
+    if (active && step.id === stepId) next();
+  }, [active, next, step.id]);
 
   useEffect(() => {
-    if (!active || !autoPlay || index >= TOUR_STEPS.length - 1) return;
+    if (!active || !autoPlay || step.interaction || index >= TOUR_STEPS.length - 1) return;
     const timer = window.setTimeout(next, AUTO_ADVANCE_MS);
     return () => window.clearTimeout(timer);
-  }, [active, autoPlay, index, next]);
+  }, [active, autoPlay, index, next, step.interaction]);
 
   const value = useMemo<TourValue>(() => ({
-    active, autoPlay, index, step, next, previous, skip, restart, setAutoPlay
-  }), [active, autoPlay, index, next, previous, restart, skip, step]);
+    active, autoPlay, index, step, next, previous, skip, restart, completeStep, setAutoPlay
+  }), [active, autoPlay, completeStep, index, next, previous, restart, skip, step]);
 
   return <TourContext.Provider value={value}>{children}</TourContext.Provider>;
 }
