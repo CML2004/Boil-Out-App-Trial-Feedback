@@ -1,7 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes, useSearchParams } from "react-router-dom";
 import { DemoBanner } from "./components/DemoBanner";
 import { TourOverlay } from "./components/TourOverlay";
-import { DevelopmentPage } from "./pages/DevelopmentPage";
 import { FryerPage } from "./pages/FryerPage";
 import { LeadershipPage } from "./pages/LeadershipPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -28,7 +27,7 @@ function DemoRoutes() {
         <Route path="/store/:storeCode" element={<StoreDashboardPage />} />
         <Route path="/fryer/:storeCode/:fryerId" element={<FryerPage />} />
         <Route path="/leadership/:storeCode" element={<LeadershipPage />} />
-        <Route path="/development" element={<DevelopmentPage />} />
+        <Route path="/development" element={<Navigate replace to="/store/CFA02851" />} />
         <Route path="/index.html" element={<LegacyStoreRedirect />} />
         <Route path="/fryer.html" element={<LegacyFryerRedirect />} />
         <Route path="/leadership-dashboard.html" element={<Navigate replace to="/leadership/CFA02851" />} />

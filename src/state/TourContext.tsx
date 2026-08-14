@@ -207,44 +207,6 @@ export const TOUR_STEPS: TourStep[] = [
     body: "Press Export Demo CSV to download the simulated completion history."
   },
   {
-    id: "development-overview",
-    path: "/development",
-    target: "development-overview",
-    title: "Review the full rollout",
-    body: "The development dashboard summarizes active, trial, blocked, and email-enabled stores."
-  },
-  {
-    id: "nickname-form",
-    path: "/development",
-    target: "nickname-form",
-    interaction: "form",
-    title: "Update a store nickname",
-    body: "Change the nickname—for example, to Training Store—then press Save nickname."
-  },
-  {
-    id: "development-email-toggle",
-    path: "/development",
-    target: "development-email-toggle",
-    interaction: "change",
-    title: "Change email availability",
-    body: "Toggle Email alerts live to simulate controlling email access for this store."
-  },
-  {
-    id: "blocked-tab",
-    path: "/development",
-    target: "blocked-tab",
-    interaction: "click",
-    title: "View blocked stores",
-    body: "Press Paywall blocked to switch the development dashboard view."
-  },
-  {
-    id: "development-controls",
-    path: "/development",
-    target: "development-controls",
-    title: "Review store controls",
-    body: "Development controls include live access, trial mode, email availability, usage activity, nicknames, and administrative links."
-  },
-  {
     id: "finish",
     path: "/store/CFA02851",
     title: "You completed the hands-on workflow",
@@ -295,8 +257,17 @@ export function TourProvider({ children }: { children: ReactNode }) {
   const skip = useCallback(() => { setActive(false); setAutoPlay(false); }, []);
   const restart = useCallback(() => { setIndex(0); setActive(true); setAutoPlay(false); }, []);
   const completeStep = useCallback((stepId: string) => {
-    if (active && step.id === stepId) next();
-  }, [active, next, step.id]);
+    if (!active) return;
+    setIndex((current) => {
+      if (TOUR_STEPS[current]?.id !== stepId) return current;
+      if (current >= TOUR_STEPS.length - 1) {
+        setActive(false);
+        setAutoPlay(false);
+        return current;
+      }
+      return current + 1;
+    });
+  }, [active]);
 
   useEffect(() => {
     if (!active || !autoPlay || step.interaction || index >= TOUR_STEPS.length - 1) return;

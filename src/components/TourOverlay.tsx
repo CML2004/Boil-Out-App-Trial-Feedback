@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { TOUR_STEPS, useTour } from "../state/TourContext";
 
 interface HighlightRect {
@@ -23,6 +23,11 @@ function measure(element: Element): HighlightRect {
 export function TourOverlay() {
   const { active, autoPlay, index, step, next, previous, skip, completeStep, setAutoPlay } = useTour();
   const [highlight, setHighlight] = useState<HighlightRect | null>(null);
+  const interactionPending = useRef(false);
+
+  useEffect(() => {
+    interactionPending.current = false;
+  }, [step.id]);
 
   useEffect(() => {
     if (!active || !step.target) {
@@ -71,13 +76,18 @@ export function TourOverlay() {
     if (!active || !step.target || (step.interaction !== "click" && step.interaction !== "change")) return;
     const eventName = step.interaction;
     const handleInteraction = (event: Event) => {
-      const target = document.querySelector(`[data-tour-id="${step.target}"]`);
-      if (target && event.target instanceof Node && target.contains(event.target)) {
+      const pressedTarget = event.composedPath().find((item) =>
+        item instanceof Element && item.getAttribute("data-tour-id") === step.target
+      );
+      if (pressedTarget && !interactionPending.current) {
+        interactionPending.current = true;
         window.setTimeout(() => completeStep(step.id), 0);
       }
     };
-    document.addEventListener(eventName, handleInteraction);
-    return () => document.removeEventListener(eventName, handleInteraction);
+    // Capture before React handles the event: navigation and modal-close
+    // controls may remove themselves from the DOM during their own handler.
+    document.addEventListener(eventName, handleInteraction, true);
+    return () => document.removeEventListener(eventName, handleInteraction, true);
   }, [active, completeStep, step.id, step.interaction, step.target]);
 
   const cardPosition = useMemo(() => highlight && highlight.top > window.innerHeight * 0.5 ? "top" : "bottom", [highlight]);

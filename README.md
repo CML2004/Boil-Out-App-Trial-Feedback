@@ -2,7 +2,7 @@
 
 This repository hosts the public, self-contained demo of the current OpsTrack Boil Outs React application.
 
-The demo mirrors the production store, fryer, leadership, and development experiences while using an in-memory data layer. It does not connect to Firebase, Brevo, Stripe, or any production service. All visitor changes reset when the page reloads or when **Reset data** is selected.
+The demo mirrors the user-facing production store, fryer, and leadership experiences while using an in-memory data layer. It does not connect to Firebase, Brevo, Stripe, or any production service. All visitor changes reset when the page reloads or when **Reset data** is selected.
 
 ## Guided tour
 
@@ -16,7 +16,6 @@ The tour starts automatically whenever the demo loads, but autoplay is off by de
 - Leadership fryer and timing-rule management
 - Email recipients and reminder settings
 - Completion CSV reporting
-- Development rollout, usage, nickname, trial, and email controls
 
 Visitors can restart the tour or reset the simulated data at any time from the blue demo banner.
 
@@ -27,7 +26,6 @@ Visitors can restart the tour or reset the simulated data at any time from the b
 | `/store/CFA02851` | Primary store dashboard |
 | `/fryer/CFA02851/:fryerId` | Interactive fryer workflow |
 | `/leadership/CFA02851` | Interactive store administration |
-| `/development` | Interactive cross-store administration |
 
 Legacy `index.html`, `fryer.html`, and `leadership-dashboard.html` URLs redirect into the React routes.
 
