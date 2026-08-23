@@ -51,7 +51,7 @@ export function TourOverlay() {
         setHighlight(null);
         return;
       }
-      target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+      target.scrollIntoView({ behavior: "smooth", block: step.scrollBlock ?? "center", inline: "nearest" });
       window.setTimeout(update, 360);
       update();
     };
@@ -65,9 +65,12 @@ export function TourOverlay() {
       window.removeEventListener("resize", update);
       window.removeEventListener("scroll", update, true);
     };
-  }, [active, step.id, step.target]);
+  }, [active, step.id, step.scrollBlock, step.target]);
 
-  const cardPosition = useMemo(() => highlight && highlight.top > window.innerHeight * 0.5 ? "top" : "bottom", [highlight]);
+  const cardPosition = useMemo(
+    () => step.cardPosition ?? (highlight && highlight.top > window.innerHeight * 0.5 ? "top" : "bottom"),
+    [highlight, step.cardPosition]
+  );
   if (!active) return null;
 
   return (

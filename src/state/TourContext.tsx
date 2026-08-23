@@ -8,6 +8,8 @@ export interface TourStep {
   path: string;
   target?: string;
   interaction?: TourInteraction;
+  cardPosition?: "top" | "bottom";
+  scrollBlock?: "start" | "center" | "end";
   title: string;
   body: string;
 }
@@ -143,10 +145,21 @@ export const TOUR_STEPS: TourStep[] = [
     body: "Enter 1234 and press Submit to unlock the leader controls."
   },
   {
+    id: "leader-tools-ready",
+    path: "/fryer/CFA02851/4",
+    target: "leader-clear-form",
+    cardPosition: "top",
+    scrollBlock: "end",
+    title: "Leader controls are unlocked",
+    body: "The Clear Boil Out Needed form is now available below. Review the fields, then select Next when you are ready to complete it."
+  },
+  {
     id: "leader-clear",
     path: "/fryer/CFA02851/4",
     target: "leader-clear-form",
     interaction: "form",
+    cardPosition: "top",
+    scrollBlock: "end",
     title: "Clear the needed flag",
     body: "Choose why the flag is being cleared, enter your initials, optionally add a note, and press Clear Flag."
   },
