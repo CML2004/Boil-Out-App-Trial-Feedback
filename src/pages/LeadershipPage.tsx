@@ -63,7 +63,7 @@ export function LeadershipPage() {
         <section className="panel report-panel" data-tour-id="leadership-reporting">
           <div><p className="eyebrow">Reporting</p><h2>Boil-out completions</h2></div>
           <p>Export simulated completion totals, dates, initials, and fryer names as a CSV file.</p>
-          <button className="button primary" data-tour-id="export-button" type="button" onClick={() => exportCompletionCsv(storeCode, store.fryers, setNotice)}>Export Demo CSV</button>
+          <button className="button primary" data-tour-id="export-button" type="button" onClick={() => { exportCompletionCsv(storeCode, store.fryers, setNotice); completeStep("export-report"); }}>Export Demo CSV</button>
         </section>
       </div>
     </AppShell>
@@ -129,7 +129,11 @@ function AddTypeForm({ config, saveConfig }: { config: StoreConfig; saveConfig: 
 }
 
 function RecipientEditor({ recipient, index, config, saveConfig }: { recipient: EmailRecipient; index: number; config: StoreConfig; saveConfig: (config: StoreConfig, message?: string) => Promise<void> }) {
-  const update = async (fields: Partial<EmailRecipient>) => saveConfig({ ...config, usersForEmailAlerts: config.usersForEmailAlerts.map((item, itemIndex) => itemIndex === index ? { ...item, ...fields } : item) }, `${recipient.name}'s alerts updated.`);
+  const { completeStep } = useTour();
+  const update = async (fields: Partial<EmailRecipient>) => {
+    await saveConfig({ ...config, usersForEmailAlerts: config.usersForEmailAlerts.map((item, itemIndex) => itemIndex === index ? { ...item, ...fields } : item) }, `${recipient.name}'s alerts updated.`);
+    completeStep("recipient-toggle");
+  };
   return <article className="recipient-card"><div><strong>{recipient.name}</strong><span>{recipient.email}</span></div><div className="toggle-list"><label><input type="checkbox" checked={recipient.alertsEnabled} onChange={(event) => update({ alertsEnabled: event.target.checked, assignmentAlerts: event.target.checked, overdueAlerts: event.target.checked })} /> All alerts</label><label><input type="checkbox" data-tour-id="recipient-needed-toggle" checked={recipient.assignmentAlerts} onChange={(event) => update({ assignmentAlerts: event.target.checked })} /> Needed</label><label><input type="checkbox" checked={recipient.overdueAlerts} onChange={(event) => update({ overdueAlerts: event.target.checked })} /> Overdue</label></div><button className="button danger small" type="button" onClick={() => saveConfig({ ...config, usersForEmailAlerts: config.usersForEmailAlerts.filter((_, itemIndex) => itemIndex !== index) }, `${recipient.name} removed.`)}>Remove</button></article>;
 }
 

@@ -17,7 +17,7 @@ export const TOUR_STEPS: TourStep[] = [
     id: "welcome",
     path: "/store/CFA02851",
     title: "Welcome to the interactive OpsTrack demo",
-    body: "This is a hands-on tour using safe, simulated data. Select Next to begin, then use each highlighted control yourself to move through the workflow."
+    body: "This is a hands-on demo. Select Next to begin, then use each highlighted control yourself to move through the workflow."
   },
   {
     id: "install-button",
