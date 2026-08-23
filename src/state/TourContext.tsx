@@ -28,12 +28,19 @@ export const TOUR_STEPS: TourStep[] = [
     body: "Press the highlighted button to see the instructions used for keeping the dashboard readily available on a kitchen display."
   },
   {
+    id: "install-instructions",
+    path: "/store/CFA02851",
+    target: "install-instructions",
+    title: "Review the setup instructions",
+    body: "These are the three steps used to add the OpsTrack shortcut to a kitchen iPad or tablet. Select Next after reviewing them."
+  },
+  {
     id: "install-close",
     path: "/store/CFA02851",
     target: "install-close",
     interaction: "click",
     title: "Close the instructions",
-    body: "Select Got It to return to the live store view."
+    body: "Select Got It to return to the store dashboard."
   },
   {
     id: "filter-needed",
@@ -46,21 +53,21 @@ export const TOUR_STEPS: TourStep[] = [
   {
     id: "open-fryer",
     path: "/store/CFA02851",
-    target: "fryer-card-3",
+    target: "fryer-card-4",
     interaction: "click",
     title: "Open a fryer",
     body: "Select the highlighted fryer card to open its operational record."
   },
   {
     id: "fryer-status",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "fryer-status",
     title: "Review the current status",
     body: "This page shows the fryer status, most recent boil-out, and the timing rules configured for its equipment type."
   },
   {
     id: "log-button",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "log-button",
     interaction: "click",
     title: "Press Log Boil Out",
@@ -68,7 +75,7 @@ export const TOUR_STEPS: TourStep[] = [
   },
   {
     id: "log-form",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "log-form",
     interaction: "form",
     title: "Complete the log",
@@ -76,14 +83,14 @@ export const TOUR_STEPS: TourStep[] = [
   },
   {
     id: "log-result",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "fryer-status",
     title: "The fryer updates immediately",
     body: "The completion resets the status and creates one uniquely identified history entry. Select Next when you are ready to flag an issue."
   },
   {
     id: "flag-button",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "flag-button",
     interaction: "click",
     title: "Press Boil Out Needed",
@@ -91,7 +98,7 @@ export const TOUR_STEPS: TourStep[] = [
   },
   {
     id: "flag-form",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "flag-form",
     interaction: "form",
     title: "Describe the issue",
@@ -99,14 +106,14 @@ export const TOUR_STEPS: TourStep[] = [
   },
   {
     id: "flag-result",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "fryer-status",
     title: "The needed flag is now visible",
     body: "The fryer status and audit record now reflect the issue. In production, enabled email notifications can also be queued from this action."
   },
   {
     id: "history-toggle",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "history-toggle",
     interaction: "click",
     title: "Open Boil Out History",
@@ -114,14 +121,14 @@ export const TOUR_STEPS: TourStep[] = [
   },
   {
     id: "history-result",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "history-content",
     title: "Review the audit trail",
     body: "Each completion, flag, correction, and leader action retains its time, initials, reason, and notes."
   },
   {
     id: "leader-toggle",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "leader-toggle",
     interaction: "click",
     title: "Open Leader Tools",
@@ -129,7 +136,7 @@ export const TOUR_STEPS: TourStep[] = [
   },
   {
     id: "leader-pin",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "leader-pin-form",
     interaction: "form",
     title: "Enter the demo PIN",
@@ -137,7 +144,7 @@ export const TOUR_STEPS: TourStep[] = [
   },
   {
     id: "leader-clear",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "leader-clear-form",
     interaction: "form",
     title: "Clear the needed flag",
@@ -145,14 +152,14 @@ export const TOUR_STEPS: TourStep[] = [
   },
   {
     id: "leader-result",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "fryer-status",
     title: "The leader action is recorded",
     body: "The flag is resolved and the reason is retained in history. Next, return to the store dashboard."
   },
   {
     id: "dashboard-link",
-    path: "/fryer/CFA02851/3",
+    path: "/fryer/CFA02851/4",
     target: "dashboard-link",
     interaction: "click",
     title: "Return to the dashboard",

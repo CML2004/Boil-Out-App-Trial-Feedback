@@ -59,7 +59,7 @@ export function StoreDashboardPage() {
         {cards.length ? (
           <section className="grid" data-tour-id="dashboard-grid">
             {cards.map(({ fryer, status, days }) => (
-              <Link key={fryer.id} className={`card ${status}`} data-tour-id={fryer.id === "3" ? "fryer-card-3" : undefined} to={`/fryer/${storeCode}/${fryer.id}`} onClick={() => { if (fryer.id === "3") completeStep("open-fryer"); }}>
+              <Link key={fryer.id} className={`card ${status}`} data-tour-id={fryer.id === "4" ? "fryer-card-4" : undefined} to={`/fryer/${storeCode}/${fryer.id}`} onClick={() => { if (fryer.id === "4") completeStep("open-fryer"); }}>
                 <div><div className="fryer-id">{fryer.name}</div><div className="status">{status === "ok" ? "OPERATIONAL" : status.toUpperCase()}</div></div>
                 <div>
                   <div className="label">Last Boil Out</div>
@@ -74,9 +74,11 @@ export function StoreDashboardPage() {
       </div>
 
       <Modal open={showInstall} title="Add to Home Screen" onClose={closeInstall}>
-        <p>This is how a store can keep its dashboard available on a kitchen iPad or tablet.</p>
-        <ol className="modal-steps"><li>Open the browser Share or menu button.</li><li>Select Add to Home Screen.</li><li>Confirm the OpsTrack shortcut.</li></ol>
-        <div className="install-url">{window.location.href}</div>
+        <div data-tour-id="install-instructions">
+          <p>This is how a store can keep its dashboard available on a kitchen iPad or tablet.</p>
+          <ol className="modal-steps"><li>Open the browser Share or menu button.</li><li>Select Add to Home Screen.</li><li>Confirm the OpsTrack shortcut.</li></ol>
+          <div className="install-url">{window.location.href}</div>
+        </div>
         <div className="modal-actions"><button className="btn btn-primary" data-tour-id="install-close" type="button" onClick={closeInstall}>Got It</button></div>
       </Modal>
     </div>
