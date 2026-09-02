@@ -10,12 +10,12 @@ import { TourProvider } from "./state/TourContext";
 
 function LegacyStoreRedirect() {
   const [search] = useSearchParams();
-  return <Navigate replace to={`/store/${search.get("store") || "CFA02851"}`} />;
+  return <Navigate replace to={`/store/${search.get("store") || "CFA00000"}`} />;
 }
 
 function LegacyFryerRedirect() {
   const [search] = useSearchParams();
-  return <Navigate replace to={`/fryer/${search.get("store") || "CFA02851"}/${search.get("id") || "1"}`} />;
+  return <Navigate replace to={`/fryer/${search.get("store") || "CFA00000"}/${search.get("id") || "1"}`} />;
 }
 
 function DemoRoutes() {
@@ -23,14 +23,14 @@ function DemoRoutes() {
     <TourProvider>
       <DemoBanner />
       <Routes>
-        <Route path="/" element={<Navigate replace to="/store/CFA02851" />} />
+        <Route path="/" element={<Navigate replace to="/store/CFA00000" />} />
         <Route path="/store/:storeCode" element={<StoreDashboardPage />} />
         <Route path="/fryer/:storeCode/:fryerId" element={<FryerPage />} />
         <Route path="/leadership/:storeCode" element={<LeadershipPage />} />
-        <Route path="/development" element={<Navigate replace to="/store/CFA02851" />} />
+        <Route path="/development" element={<Navigate replace to="/store/CFA00000" />} />
         <Route path="/index.html" element={<LegacyStoreRedirect />} />
         <Route path="/fryer.html" element={<LegacyFryerRedirect />} />
-        <Route path="/leadership-dashboard.html" element={<Navigate replace to="/leadership/CFA02851" />} />
+        <Route path="/leadership-dashboard.html" element={<Navigate replace to="/leadership/CFA00000" />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <TourOverlay />

@@ -21,7 +21,7 @@ const historyEntry = (fields: Omit<HistoryEntry, "timestamp" | "actionId">): His
 
 export function FryerPage() {
   const navigate = useNavigate();
-  const storeCode = String(useParams().storeCode || "CFA02851").toUpperCase();
+  const storeCode = String(useParams().storeCode || "CFA00000").toUpperCase();
   const fryerId = String(useParams().fryerId || "1");
   const { getStore, updateFryer } = useDemoData();
   const { active, completeStep, experience, step } = useTour();

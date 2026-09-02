@@ -9,3 +9,4 @@
 - Added a first-load experience chooser for Exhibit, Interactive, and Free browse modes.
 - Added a hands-free Exhibit mode that fills representative values, performs simulated actions, and advances automatically.
 - Added a persistent **Change experience** control to the demo banner.
+- Changed the public demo store identity and all guided-tour routes to the neutral `CFA00000` placeholder.

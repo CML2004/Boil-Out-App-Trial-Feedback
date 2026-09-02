@@ -63,8 +63,8 @@ function createInitialStores(): DemoStore[] {
 
   return [
     {
-      storeCode: "CFA02851",
-      storeName: "Store 02851",
+      storeCode: "CFA00000",
+      storeName: "Store 00000",
       config: baseConfig({ nickname: "Downtown Kitchen" }),
       fryers: primaryFryers,
       usage: { lastSeenAt: new Date().toISOString(), lastSeenPage: "store-dashboard", totalPageViews: 1248 },

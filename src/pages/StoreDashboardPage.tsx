@@ -9,7 +9,7 @@ import { useTour } from "../state/TourContext";
 type Filter = "all" | FryerStatus;
 
 export function StoreDashboardPage() {
-  const storeCode = String(useParams().storeCode || "CFA02851").toUpperCase();
+  const storeCode = String(useParams().storeCode || "CFA00000").toUpperCase();
   const { getStore } = useDemoData();
   const { active, completeStep, experience, step } = useTour();
   const store = getStore(storeCode);

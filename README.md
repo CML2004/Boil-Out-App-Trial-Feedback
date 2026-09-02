@@ -31,9 +31,9 @@ Visitors can restart the tour or reset the simulated data at any time from the b
 
 | Route | Demo experience |
 | --- | --- |
-| `/store/CFA02851` | Primary store dashboard |
-| `/fryer/CFA02851/:fryerId` | Interactive fryer workflow |
-| `/leadership/CFA02851` | Interactive store administration |
+| `/store/CFA00000` | Primary store dashboard |
+| `/fryer/CFA00000/:fryerId` | Interactive fryer workflow |
+| `/leadership/CFA00000` | Interactive store administration |
 
 Legacy `index.html`, `fryer.html`, and `leadership-dashboard.html` URLs redirect into the React routes.
 

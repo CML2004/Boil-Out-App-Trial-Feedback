@@ -8,7 +8,7 @@ import { useTour } from "../state/TourContext";
 type Notice = { type: "success" | "error"; text: string } | null;
 
 export function LeadershipPage() {
-  const storeCode = String(useParams().storeCode || "CFA02851").toUpperCase();
+  const storeCode = String(useParams().storeCode || "CFA00000").toUpperCase();
   const { getStore, updateFryer, addFryer, deleteFryer, saveConfig } = useDemoData();
   const { completeStep } = useTour();
   const store = getStore(storeCode);
