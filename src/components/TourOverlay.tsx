@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { TOUR_STEPS, useTour } from "../state/TourContext";
+import {
+  AUTO_ADVANCE_MS,
+  EXHIBIT_ACTION_MS,
+  EXHIBIT_INFO_MS,
+  TOUR_STEPS,
+  useTour,
+  type DemoExperience
+} from "../state/TourContext";
 
 interface HighlightRect {
   top: number;
@@ -20,8 +27,54 @@ function measure(element: Element): HighlightRect {
   return { top, left, right, bottom, width: Math.max(0, right - left), height: Math.max(0, bottom - top) };
 }
 
+const EXPERIENCE_OPTIONS: Array<{ id: DemoExperience; label: string; badge: string; description: string }> = [
+  {
+    id: "exhibit",
+    label: "Exhibit",
+    badge: "Watch",
+    description: "See a guided walkthrough that fills forms, performs demo actions, and moves forward automatically."
+  },
+  {
+    id: "interactive",
+    label: "Interactive",
+    badge: "Recommended",
+    description: "Follow the guided tour and use each highlighted OpsTrack control yourself."
+  },
+  {
+    id: "free",
+    label: "Free browse",
+    badge: "Explore",
+    description: "Dismiss the tour and explore every simulated screen at your own pace."
+  }
+];
+
+function ExperienceChooser({ chooseExperience }: { chooseExperience: (experience: DemoExperience) => void }) {
+  return (
+    <div className="tour-layer" aria-live="polite">
+      <div className="tour-shade tour-shade-full" />
+      <section className="experience-picker" role="dialog" aria-modal="true" aria-labelledby="experience-title">
+        <div className="eyebrow">OpsTrack interactive demo</div>
+        <h2 id="experience-title">Choose your demo experience</h2>
+        <p>Select the pace and level of participation that works best for you. You can change this later from the demo banner.</p>
+        <div className="experience-options">
+          {EXPERIENCE_OPTIONS.map((option) => (
+            <button key={option.id} type="button" autoFocus={option.id === "interactive"} onClick={() => chooseExperience(option.id)}>
+              <span className="experience-option-top"><strong>{option.label}</strong><small>{option.badge}</small></span>
+              <span>{option.description}</span>
+              <span className="experience-option-arrow" aria-hidden="true">→</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export function TourOverlay() {
-  const { active, autoPlay, index, step, next, previous, skip, setAutoPlay } = useTour();
+  const {
+    active, autoPlay, chooseExperience, experience, index, isAdvancing,
+    next, previous, setAutoPlay, skip, step
+  } = useTour();
   const [highlight, setHighlight] = useState<HighlightRect | null>(null);
 
   useEffect(() => {
@@ -71,7 +124,30 @@ export function TourOverlay() {
     () => step.cardPosition ?? (highlight && highlight.top > window.innerHeight * 0.5 ? "top" : "bottom"),
     [highlight, step.cardPosition]
   );
+  if (!experience) return <ExperienceChooser chooseExperience={chooseExperience} />;
   if (!active) return null;
+
+  const exhibit = experience === "exhibit";
+  const progressDuration = exhibit
+    ? (step.interaction ? EXHIBIT_ACTION_MS : EXHIBIT_INFO_MS)
+    : AUTO_ADVANCE_MS;
+  const title = exhibit && step.id === "finish" ? "Exhibit walkthrough complete" : step.title;
+  const body = exhibit && step.id === "welcome"
+    ? "This guided exhibit walks through OpsTrack and performs each simulated action for you. Pause or move between steps whenever you want."
+    : exhibit && step.id === "finish"
+      ? "Explore freely, restart the exhibit, choose a different experience, or use Give Feedback to share what would make OpsTrack more useful."
+      : exhibit && step.id === "export-report"
+        ? "This is where a leader exports the simulated completion report. The exhibit previews the control without downloading a file."
+        : `${step.body}${exhibit && step.interaction ? " This action will run automatically." : ""}`;
+  const nextLabel = isAdvancing
+    ? "Working…"
+    : index === TOUR_STEPS.length - 1
+      ? "Explore demo"
+      : exhibit && step.interaction
+        ? "Run now"
+        : step.interaction
+          ? "Skip action"
+          : "Next";
 
   return (
     <div className="tour-layer" aria-live="polite">
@@ -87,17 +163,17 @@ export function TourOverlay() {
 
       <section className={`tour-card ${cardPosition}`} role="dialog" aria-modal="true" aria-label="Interactive demo tour">
         <div className="tour-progress-row">
-          <span>Interactive tour</span>
+          <span>{exhibit ? "Exhibit tour" : "Interactive tour"}</span>
           <span>{index + 1} / {TOUR_STEPS.length}</span>
         </div>
-        <div className="tour-progress"><span key={step.id} className={autoPlay && !step.interaction ? "playing" : ""} /></div>
-        <h2>{step.title}</h2>
-        <p>{step.body}</p>
+        <div className="tour-progress"><span key={step.id} className={autoPlay && (exhibit || !step.interaction) ? "playing" : ""} style={{ animationDuration: `${progressDuration}ms` }} /></div>
+        <h2>{title}</h2>
+        <p>{body}</p>
         <div className="tour-actions">
-          <button className="button ghost small" type="button" onClick={skip}>Skip</button>
-          <button className="button ghost small" type="button" onClick={() => setAutoPlay(!autoPlay)} disabled={Boolean(step.interaction)}>{step.interaction ? "Hands-on step" : autoPlay ? "Pause" : "Auto-play"}</button>
-          <button className="button ghost small" type="button" onClick={previous} disabled={index === 0}>Back</button>
-          <button className="button primary small" type="button" onClick={next} disabled={Boolean(step.interaction)}>{step.interaction ? "Complete action" : index === TOUR_STEPS.length - 1 ? "Explore demo" : "Next"}</button>
+          <button className="button ghost small" type="button" onClick={skip} disabled={isAdvancing}>Exit tour</button>
+          <button className="button ghost small" type="button" onClick={() => setAutoPlay(!autoPlay)} disabled={isAdvancing || (!exhibit && Boolean(step.interaction))}>{exhibit ? (autoPlay ? "Pause" : "Resume") : step.interaction ? "Hands-on step" : autoPlay ? "Pause" : "Auto-play"}</button>
+          <button className="button ghost small" type="button" onClick={previous} disabled={isAdvancing || index === 0}>Back</button>
+          <button className="button primary small" type="button" onClick={next} disabled={isAdvancing}>{nextLabel}</button>
         </div>
       </section>
     </div>

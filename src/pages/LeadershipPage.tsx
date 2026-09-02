@@ -97,8 +97,19 @@ function FryerEditor({ storeCode, fryer, config, updateFryer, deleteFryer, setNo
 }
 
 function AddFryerForm({ storeCode, fryers, config, addFryer, setNotice }: { storeCode: string; fryers: Fryer[]; config: StoreConfig; addFryer: ReturnType<typeof useDemoData>["addFryer"]; setNotice: (notice: Notice) => void }) {
-  const { completeStep } = useTour();
+  const { completeStep, experience, step } = useTour();
   const [name, setName] = useState(""); const [type, setType] = useState(Object.keys(config.typeRules)[0]); const [date, setDate] = useState(""); const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    if (experience !== "exhibit") return;
+    if (step.id === "add-fryer") {
+      setName("Exhibit Fryer");
+      setType(Object.keys(config.typeRules)[0]);
+      setDate(new Date().toISOString().slice(0, 10));
+    } else {
+      setName("");
+      setDate("");
+    }
+  }, [config.typeRules, experience, step.id]);
   return <form className="add-row" data-tour-id="add-fryer-form" onSubmit={async (event) => {
     event.preventDefault(); setBusy(true);
     const nextId = String(Math.max(0, ...fryers.map((item) => Number(item.id) || 0)) + 1);

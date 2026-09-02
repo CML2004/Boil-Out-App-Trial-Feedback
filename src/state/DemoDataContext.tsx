@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 import { DEFAULT_TYPE_RULES } from "../domain/status";
 import type { DemoStore, Fryer, HistoryEntry, StoreConfig } from "../domain/types";
 
@@ -106,18 +106,27 @@ interface DemoDataValue {
   saveConfig: (storeCode: string, config: StoreConfig) => Promise<void>;
   removeStore: (storeCode: string) => Promise<void>;
   resetDemo: () => void;
+  snapshotDemo: () => DemoStore[];
+  restoreDemo: (snapshot: DemoStore[]) => void;
 }
 
 const DemoDataContext = createContext<DemoDataValue | null>(null);
 
 export function DemoDataProvider({ children }: { children: ReactNode }) {
   const [stores, setStores] = useState(createInitialStores);
+  const storesRef = useRef(stores);
+
+  const updateStores = useCallback((update: (current: DemoStore[]) => DemoStore[]) => {
+    const next = update(storesRef.current);
+    storesRef.current = next;
+    setStores(next);
+  }, []);
 
   const getStore = useCallback((storeCode: string) => stores.find((store) => store.storeCode === storeCode), [stores]);
 
   const updateFryer: DemoDataValue["updateFryer"] = useCallback(async (storeCode, fryerId, fields, historyEntry) => {
     await waitForDemoSave();
-    setStores((current) => current.map((store) => store.storeCode !== storeCode ? store : {
+    updateStores((current) => current.map((store) => store.storeCode !== storeCode ? store : {
       ...store,
       eventCount: store.eventCount + 1,
       fryers: store.fryers.map((fryer) => fryer.id !== fryerId ? fryer : {
@@ -126,39 +135,45 @@ export function DemoDataProvider({ children }: { children: ReactNode }) {
         history: historyEntry ? [historyEntry, ...fryer.history] : fryer.history
       })
     }));
-  }, []);
+  }, [updateStores]);
 
   const addFryer: DemoDataValue["addFryer"] = useCallback(async (storeCode, fryer) => {
     await waitForDemoSave();
-    setStores((current) => current.map((store) => store.storeCode === storeCode
+    updateStores((current) => current.map((store) => store.storeCode === storeCode
       ? { ...store, fryers: [...store.fryers, fryer], eventCount: store.eventCount + 1 }
       : store));
-  }, []);
+  }, [updateStores]);
 
   const deleteFryer: DemoDataValue["deleteFryer"] = useCallback(async (storeCode, fryerId) => {
     await waitForDemoSave();
-    setStores((current) => current.map((store) => store.storeCode === storeCode
+    updateStores((current) => current.map((store) => store.storeCode === storeCode
       ? { ...store, fryers: store.fryers.filter((fryer) => fryer.id !== fryerId), eventCount: store.eventCount + 1 }
       : store));
-  }, []);
+  }, [updateStores]);
 
   const saveConfig: DemoDataValue["saveConfig"] = useCallback(async (storeCode, config) => {
     await waitForDemoSave();
-    setStores((current) => current.map((store) => store.storeCode === storeCode
+    updateStores((current) => current.map((store) => store.storeCode === storeCode
       ? { ...store, config, eventCount: store.eventCount + 1 }
       : store));
-  }, []);
+  }, [updateStores]);
 
   const removeStore: DemoDataValue["removeStore"] = useCallback(async (storeCode) => {
     await waitForDemoSave();
-    setStores((current) => current.filter((store) => store.storeCode !== storeCode));
+    updateStores((current) => current.filter((store) => store.storeCode !== storeCode));
+  }, [updateStores]);
+
+  const resetDemo = useCallback(() => updateStores(() => createInitialStores()), [updateStores]);
+  const snapshotDemo = useCallback(() => structuredClone(storesRef.current), []);
+  const restoreDemo = useCallback((snapshot: DemoStore[]) => {
+    const restored = structuredClone(snapshot);
+    storesRef.current = restored;
+    setStores(restored);
   }, []);
 
-  const resetDemo = useCallback(() => setStores(createInitialStores()), []);
-
   const value = useMemo<DemoDataValue>(() => ({
-    stores, getStore, updateFryer, addFryer, deleteFryer, saveConfig, removeStore, resetDemo
-  }), [addFryer, deleteFryer, getStore, removeStore, resetDemo, saveConfig, stores, updateFryer]);
+    stores, getStore, updateFryer, addFryer, deleteFryer, saveConfig, removeStore, resetDemo, snapshotDemo, restoreDemo
+  }), [addFryer, deleteFryer, getStore, removeStore, resetDemo, restoreDemo, saveConfig, snapshotDemo, stores, updateFryer]);
 
   return <DemoDataContext.Provider value={value}>{children}</DemoDataContext.Provider>;
 }

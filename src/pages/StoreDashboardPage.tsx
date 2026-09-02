@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Modal } from "../components/Modal";
 import { countFryerStatuses, daysSince, formatShortDate, getFryerStatus, getStatusSortRank } from "../domain/status";
@@ -11,10 +11,23 @@ type Filter = "all" | FryerStatus;
 export function StoreDashboardPage() {
   const storeCode = String(useParams().storeCode || "CFA02851").toUpperCase();
   const { getStore } = useDemoData();
-  const { completeStep } = useTour();
+  const { active, completeStep, experience, step } = useTour();
   const store = getStore(storeCode);
   const [filter, setFilter] = useState<Filter>("all");
   const [showInstall, setShowInstall] = useState(false);
+
+  useEffect(() => {
+    if (!active) return;
+    if (step.id === "welcome") {
+      setFilter("all");
+      setShowInstall(false);
+    } else if (step.id === "install-instructions" || step.id === "install-close") {
+      setShowInstall(true);
+    } else if (step.id === "install-button" || step.id === "filter-needed") {
+      setShowInstall(false);
+      if (step.id === "filter-needed" && experience === "exhibit") setFilter("needed");
+    }
+  }, [active, experience, step.id]);
 
   const fryerCards = useMemo(() => {
     if (!store) return [];

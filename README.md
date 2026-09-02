@@ -4,9 +4,17 @@ This repository hosts the public, self-contained demo of the current OpsTrack Bo
 
 The demo mirrors the user-facing production store, fryer, and leadership experiences while using an in-memory data layer. It does not connect to Firebase, Brevo, Stripe, or any production service. All visitor changes reset when the page reloads or when **Reset data** is selected.
 
-## Guided tour
+## Demo experiences
 
-The tour starts automatically whenever the demo loads, but autoplay is off by default. Visitors press the highlighted application controls, complete forms, and make simulated changes themselves. Successful interactions advance the tour; informational steps use Next and Back, and the entire tour can be skipped.
+The demo opens with an experience chooser and can be switched later from the persistent demo banner:
+
+- **Exhibit** runs a hands-free guided walkthrough. It opens the relevant controls, fills representative demo values, performs simulated actions, and advances automatically. Visitors can pause, go back, or run the current action immediately.
+- **Interactive** provides the guided, hands-on workflow. Visitors use each highlighted control themselves or select **Skip action** to continue past an action.
+- **Free browse** disables the tour overlay and forced route changes so visitors can explore the complete simulated product at their own pace.
+
+For both guided experiences, Back restores the simulated data captured when the previous step opened and reopens that step's modal or expandable control. Restart tour returns the walkthrough and its simulated data to the initial state. The tour can also be exited at any time.
+
+## Guided tour coverage
 
 - Store-level status cards and filters
 - Individual fryer status and store-dashboard navigation

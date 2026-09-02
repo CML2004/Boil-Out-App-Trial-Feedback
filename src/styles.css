@@ -308,6 +308,18 @@ input[type="checkbox"] { width: 18px; min-height: 18px; padding: 0; accent-color
 .tour-progress span.playing { animation: tour-progress 9s linear forwards; }
 .tour-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 7px; }
 
+.experience-picker { position: fixed; left: 50%; top: 50%; z-index: 3002; width: min(940px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow: auto; transform: translate(-50%, -50%); border-top: 6px solid #ffb154; background: #fff; color: var(--text); padding: clamp(24px, 5vw, 44px); box-shadow: 0 18px 60px rgb(0 0 0 / 32%); pointer-events: auto; }
+.experience-picker h2 { max-width: 720px; margin: 10px 0 12px; font-size: clamp(32px, 6vw, 54px); line-height: 1; letter-spacing: -.045em; text-transform: uppercase; }
+.experience-picker > p { max-width: 720px; margin: 0 0 28px; color: var(--muted); font-size: 15px; line-height: 1.6; }
+.experience-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.experience-options button { position: relative; min-height: 220px; display: flex; flex-direction: column; align-items: stretch; gap: 16px; border: 2px solid var(--surface-3); background: var(--surface); color: var(--text); padding: 22px 22px 48px; text-align: left; cursor: pointer; transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
+.experience-options button:hover, .experience-options button:focus-visible { transform: translateY(-3px); border-color: var(--primary); box-shadow: 0 12px 28px rgb(17 29 35 / 14%); outline: none; }
+.experience-option-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.experience-option-top strong { font-family: "Space Grotesk", sans-serif; font-size: 26px; letter-spacing: -.035em; text-transform: uppercase; }
+.experience-option-top small { border: 1px solid var(--surface-3); background: var(--surface-2); padding: 5px 7px; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.experience-options button > span:nth-child(2) { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.experience-option-arrow { position: absolute; right: 20px; bottom: 16px; color: var(--primary); font-size: 28px; font-weight: 800; }
+
 @keyframes tour-progress { from { width: 0; } to { width: 100%; } }
 
 [data-tour-id] { scroll-margin-block: 120px; }
@@ -318,4 +330,8 @@ input[type="checkbox"] { width: 18px; min-height: 18px; padding: 0; accent-color
   .tour-card { max-height: min(48vh, 420px); overflow: auto; padding: 16px; }
   .tour-card h2 { margin-top: 11px; }
   .tour-actions { display: grid; grid-template-columns: repeat(2, 1fr); }
+  .experience-picker { width: calc(100% - 20px); max-height: calc(100dvh - 20px); padding: 22px 16px; }
+  .experience-picker h2 { font-size: clamp(30px, 11vw, 44px); }
+  .experience-options { grid-template-columns: 1fr; }
+  .experience-options button { min-height: 150px; padding: 18px 18px 42px; }
 }

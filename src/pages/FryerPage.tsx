@@ -24,7 +24,7 @@ export function FryerPage() {
   const storeCode = String(useParams().storeCode || "CFA02851").toUpperCase();
   const fryerId = String(useParams().fryerId || "1");
   const { getStore, updateFryer } = useDemoData();
-  const { completeStep } = useTour();
+  const { active, completeStep, experience, step } = useTour();
   const store = getStore(storeCode);
   const fryer = store?.fryers.find((item) => item.id === fryerId);
   const [dialog, setDialog] = useState<Dialog>(null);
@@ -45,6 +45,57 @@ export function FryerPage() {
     const timeout = window.setTimeout(() => setNotice(null), 4_000);
     return () => window.clearTimeout(timeout);
   }, [notice]);
+
+  useEffect(() => {
+    if (!active) return;
+    switch (step.id) {
+      case "log-form":
+        setDialog("log");
+        if (experience === "exhibit") setInitials("DM");
+        break;
+      case "flag-form":
+        setDialog("flag");
+        if (experience === "exhibit") {
+          setInitials("DM");
+          setReason("oil-quality");
+          setNotes("Exhibit walkthrough");
+        }
+        break;
+      case "history-toggle":
+        setDialog(null);
+        setHistoryOpen(false);
+        break;
+      case "history-result":
+        setDialog(null);
+        setHistoryOpen(true);
+        break;
+      case "leader-toggle":
+        setDialog(null);
+        setPin("");
+        setLeaderUnlocked(false);
+        setLeaderOpen(false);
+        break;
+      case "leader-pin":
+        setPin(experience === "exhibit" ? "1234" : "");
+        setLeaderUnlocked(false);
+        setLeaderOpen(false);
+        setDialog("leader");
+        break;
+      case "leader-tools-ready":
+      case "leader-clear":
+        setDialog(null);
+        setLeaderUnlocked(true);
+        setLeaderOpen(true);
+        if (step.id === "leader-clear" && experience === "exhibit") {
+          setInitials("DM");
+          setClearReason("leadership-review");
+          setNotes("Exhibit walkthrough");
+        }
+        break;
+      default:
+        setDialog(null);
+    }
+  }, [active, experience, step.id]);
 
   const sortedHistory = useMemo(() => [...(fryer?.history || [])].sort((a, b) => b.timestamp.localeCompare(a.timestamp)), [fryer]);
   if (!store || !fryer) return <div className="empty-state">That demo fryer is not available.</div>;
